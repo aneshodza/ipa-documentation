@@ -5,12 +5,31 @@ Die Kurzfassung gibt einen Überblick über das vorliegende Projekt.
 
 \section{Ausgangssituation}
 
-\lipsum[20]
+Die Renuo AG verwendet schon seit längerem Redmine, ein \gls{Open-Source} Projektmanagment tool. Es dient dazu, einem
+Team mehrere Projekte zu verwalten und den überblick zu behalten. Es hat sehr viele features, wie zum Beispiel: \cite{redmine_homepage}
+\begin{itemize}
+    \item Unterztützung von mehreren Projekten
+    \item Flexibles Rollensystem
+    \item \textbf{Issue-Tracking}
+    \item ...
+\end{itemize}
+Für uns wichtig ist das \enquote{Issue-Tracking}. Dieses ermöglicht es einem Nutzer jedem Projekt verschiedene Issues zuzuweisen.
+Diese Issues sollen aber nicht als Bugs verstanden werden, sondern als Aufgaben, die erledigt werden müssen. In der Regel sind das
+\gls{Feature-Requests}, die von Kunden kommen. Diese werden dann von einem Entwickler übernommen und bearbeitet. \newline
+Das Problem ist, dass es bei aktiven Projekten sehr viele Issues gibt und es schwierig ist, den Überblick zu behalten.
+Das Ziel dieser PA ist es, die \gls{Pull-Request}s sowie die \gls{Deployment}-Status von Issues direkt im Redmine anzuzeigen.
 
 \section{Umsetzung}
 
-\lipsum[21-22]
+Die PA wird mit IPERKA geplant und umgesetzt. \newline
+Softwaretechnisch wird die PA mit Ruby on Rails umgesetzt, da Redmine auf dieser Technologie basiert. Es werden auch
+die gleichen Frameworks für: das Testen, die Views und so weiter wie im standard Redmine verwendet. \newline
+Das Plugin soll auf Webhooks der externen Dienste reagieren und bestimmte Logik als Reaktion darauf ausführen. \newline
+Während der Entwicklung werden für das Plugin auch automatisierte Tests geschrieben, um die Qualität des Codes zu gewährleisten.
+Die Test-Abdeckung soll 100\% betragen.
 
 \section{Ergebnis}
 
-\lipsum[22]
+Das Ergebnis dieser PA sollte ein Redmine-Plugin sein, welches die open gennanten Informationen wiedergeben kann. \newline
+Das Plugin soll komplett von Redmine abgekoppelt sein, damit es auch in anderen Redmine-Instanzen verwendet werden kann.
+Das bedeutet, dass der Quellcode von Redmine selbst nicht verändert werden darf. \newline
