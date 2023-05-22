@@ -15,7 +15,7 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
     \item Informieren
     \begin{description}
         \item[AP1: Anforderungen analysieren] Der Auftrag wird analysiert und daraus einzelne Arbeitspakete abgeleitet. 
-        \item[AP2: Kurzfassung ableiten und schreiben] Es wird anhand von der Analyse eine Kurzfassung des Auftrages abgeleitet und verfasst.
+        \item[AP2: Kurzfassung ableiten und schreiben] Es wird anhand der Analyse eine Kurzfassung des Auftrages abgeleitet und verfasst.
         \item[AP3: Firmenstandards] Die Firmenstandards werden dokumentiert.
     \end{description}
     \item Planen
@@ -27,26 +27,26 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
     \item Entscheiden
     \begin{description}
         \item[AP7: Bewerten von verschiedenen Optionen] Alle möglichen Optionen werden (falls es eine Entscheidung zum Treffen gibt) ausgewertet. Die Auswertemethode kann je nach Anwendungsfall verschieden sein.
-        \item[AP6: Entscheiden der Optionen] Nachdem ausgewertet wurde, wird eine der Optionen genommen. Dies wird dokumentiert.
+        \item[AP6: Entscheiden der Optionen] Nach der Auswertung, wird eine der Optionen genommen. Dies wird dokumentiert.
     \end{description}
     \item Realisieren
     \begin{description}
         \item[AP7: Aufsetzen des Projektes] Das Projekt wird aufgesetzt und mit GitHub verbunden. Das Gleiche gilt für die CI. \newline
         Es werden auch die nötigen \gls{Hooks} auf allen nötigen Diensten eingestellt.
         \item[AP10: Umsetzen der Datenstruktur auf Basis der Diagramme] Die Datenstruktur wird im Projekt umgesetzt. Diese soll nicht von den Diagrammen abweichen.
-        \item[AP11: Daten erstellen und manipulieren] Das erstellen, sowie manipulieren von Daten anhand der Webhooks soll umgesetzt werden.
-        \item[AP12: Implementieren der \gls{Business Logic}] Die Business Logic wird implementiert. Damit ist das Auswerten der Daten gemeint.
+        \item[AP11: Daten erstellen und manipulieren] Das erstellen, sowie Manipulieren von Daten anhand der Webhooks soll umgesetzt werden.
+        \item[AP12: Implementieren der \gls{Business-Logic}] Die Business Logic wird implementiert. Damit ist das Auswerten der Daten gemeint.
         \item[AP13: Erstellen der \gls{Views}] Die Views werden anhand der \gls{Mockups} erstellt.
     \end{description}
     \item Kontrollieren
     \begin{description}
         \item[AP14: Nach Testkonzept testen] Das Testkonzept wird als Checkliste verwendet und die einzelnen Tests werden nach Protokoll durchgeführt \newline
         Das individuelle Kriterium 7 (Automatisierte Tests) wird auch dokumentiert.
-        \item[AP15: Kopplung vom Hauptprogramm] In retrospektive wird festgehalten wie gut das Programm vom Hauptprogramm abgekoppelt ist.
+        \item[AP15: Kopplung vom Hauptprogramm] In Retrospektive wird festgehalten wie gut das Programm vom Hauptprogramm abgekoppelt ist.
     \end{description}
     \item Auswerten
     \begin{description}
-        \item[AP16: Auswerten] Es wird eine Auswertung/Reflexion über das Projekt geschrieben.
+        \item[AP16: Auswerten] Es wird eine Auswertung beziehungsweise Reflexion über das Projekt geschrieben.
     \end{description}
 \end{itemize}
 
@@ -64,7 +64,7 @@ Im Folgenden wird die Einbettung des Systems in das Gesamtsystem gezeigt, sowie 
 
 \subsection{Schnittstellen}
 Dieses Kapitel beschreibt die in der Grafik \ref{fig:deployment-diagram} gezeigten Schnittstellen im Detail.
-Unter Schnittstellen gelten Elemente, welche ausserhalb des Plugins liegen.
+Unter Schnittstellen gelten Elemente, die ausserhalb des Plugins liegen.
 
 \subsubsection{SemaphoreCI}
 SemaphoreCI ist ein Dienst, welcher die CI/CD Pipeline für Projekte bereitstellt. Dieser hat ein
@@ -81,15 +81,15 @@ Die Database repräsentiert die Datenbank, welche von der Redmine-Instanz verwen
 Redmine (fast) jedes beliebige Datenbanksystem sein. In der Regel wird bei der Renuo AG PostgreSQL verwendet.
 
 \subsubsection{ActiveRecord}
-ActiveRecord ist ein ORM (Object Relational Mapper) für Ruby. Dieses stellt eine Schnittstelle zwischen der
+ActiveRecord ist ein ORM (Object Relational Mapping) für Ruby. Dieses stellt eine Schnittstelle zwischen der
 Datenbank und dem Rails Programm dar. Es wird verwendet, um die Datenbank zu abstrahieren und die Daten
 in Objekte zu konvertieren.
 
 \subsection{Akteure}
 \begin{tabularx}{\textwidth}[H]{|c|X|}
   \hline
-  User & Der \enquote{User} ist der Redmine-Nutzer. Dieser kann eine beliebige Rolle haben (solang er die 
-  Issues lesen darf). \\ \hline
+  User & Der \enquote{User} ist der Redmine-Nutzer. Dieser kann eine beliebige Rolle haben, solange er die 
+  Issues lesen darf. \\ \hline
   GitHub \& SemaphoreCI & Diese beiden Akteure sind die Dienste, welche auf die Schnittstellen zugreifen.
   \\ \hline
 \end{tabularx}
