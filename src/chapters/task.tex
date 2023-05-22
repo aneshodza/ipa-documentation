@@ -5,11 +5,44 @@ Dieses Kapitel beinhaltet die komplette Aufgabenstellung im originalen Wortlaut.
 
 \section{Ausgangslage}
 
-\lipsum[1-2]
+Die Renuo AG verwendet Redmine, eine freie, webbasierte Projektmanagement-Software. Alle Kundenprojekte und internen Aufgaben werden in Redmine mithilfe von Tickets orchestriert. Ein Product-Owner (PO) erarbeitet die Anforderungen zusammen mit dem Kunden, schreibt sie in das Ticket und übergibt sie an die Entwickler. Danach startet die Implementationsphase. Diese Phase durchläuft je nach Grösse des Projektes verschiedene Ticket-Status ("in progress", "in review", "on staging", "to deploy", "on master"). In dieser Zeit muss sich der PO darauf verlassen, dass der zuständige Entwickler den Ticket-Status gewissenhaft nachführt. Das ist aber oft nicht repräsentativ für den wirklichen Entwicklungsstand. Es passiert immer wieder, dass Code-Reviews oder das Testen auf dem Staging-Server durch den Kunden lange dauern. Der PO muss sich also immer wieder bei den Entwicklern nach dem Stand der Tickets erkundigen. Da wir mit Git-Feature-Branches arbeiten, wäre eigentlich die Redmine-Ticketnummer in unseren Git-Branches verfügbar.
+
+Das Ziel dieser Arbeit ist es, die Arbeit des PO zu vereinfachen. Dazu wird ein Redmine-Plugin entwickelt, das im Ticket die zugehörigen GitHub-Pull-Requests und Semaphore-Deployments anzeigt. Als Identifikation der Code-Zugehörigkeit wird die Redmine-Ticketnummer im Git-Branch verwendet.
 
 \section{Detaillierte Aufgabenstellung}
 
-\lipsum[3-9]
+Die Software bedient folgende Benutzerrolle: \newline
+- "PO" (Product-Owner) spezifiziert und kontrolliert Redmine-Tickets. \newline
+- "Entwickler" implementiert Source-Code anhand eines Redmine-Tickets. \newline
+
+Folgende User-Stories sollen verwirklicht werden: \newline
+- F1: Als PO möchte ich alle zum Ticket zugehörigen GitHub-Pull-Requests in einer Liste sehen, damit ich den Entwicklungsfortschritt des Tickets beurteilen kann. Die Listeneinträge enthalten den Status der Pull-Requests (draft, open, merged) und sind klickbare Links, die direkt zu GitHub abspringen (z.B. \url{https://github.com/renuo/rails\_api\_logger/pull/3}). Die Identifikation des zugehörigen Pull-Requests findet über die Ticketnummer im Branch-Namen statt. \newline
+- F2: Als PO möchte ich eine Liste der Semaphore-Deployments zum Ticket sehen. Ich sehe das Datum und den Status (Erfolg, Misserfolg). Jeder Listeneintrag ist ein klickbarer Link, der zu Semaphore abspringt. Der Status kann auch einfach farbcodiert sein. \newline
+Anzuzeigen sind Deployments von den develop und master/main-Git-Branches. \newline
+Achtung: Es kann nicht einfach so auf einen Branch-Namen eines gelöschten Branches geschlossen werden. Zur Identifikation des Redmine-Tickets soll die Pull-Request-Nummer aus der von Semaphore zurückgegebenen commit\_message verwendet werden um über den GitHub-Pull-Request Rückschlüsse zu ziehen (via GitHub-API). \newline
+Es gelten folgende nicht-funktionalen Anforderungen: \newline
+- Software-Design: Das Plugin muss so entkoppelt von Redmine sein, wie möglich. So sollen z.B. bestehende Redmine-Tabellen nicht verändert werden (Join-Tables verwenden). \newline
+- Software-Design: Das Plugin soll sich an die Coding-Guidelines von Redmine halten und schon vorhandene Bibliotheken nutzen (z.B. Minitest, ERB statt Slim). \newline
+- Software-Design: Die Informationen zum externen Fortschritt müssen beim Öffnen der Ticket-Ansicht schon verfügbar sein. Etwaige Synchronisierung soll mittels Background-Job oder im Webhook-Call umgesetzt werden. \newline
+- Software-Design: Die zwei Aspekte Pull-Request und Deployment-Status sollen möglichst voneinander getrennt werden. GitHub und Semaphore sollten beide in Zukunft austauschbar sein. \newline
+- Software-Design: Das Plugin soll auf Webhooks von GitHub und Semaphore hören. Aktives Polling beider Services sollte vermieden oder zumindest sehr gut begründet werden. \newline
+- Sicherheit: Webhooks von GitHub und Semaphore ermöglichen einen sparsamen Umgang mit API-Zugängen. Zum Beispiel sollte das zu entwickelnde Plugin für die Semaphore-Status-Anzeige auf schon geschehene Webhook-Calls von GitHub zurückgreifen, statt explizit selbst nochmals GitHub aufzurufen. Falls das nicht immer geht, dürfen zur Verbesserung der Sicherheit begründete Kompromisse beim Feature-Umfang eingegangen werden. \newline
+- UX: Für die Bedienung darf kein dediziertes Benutzerhandbuch notwendig sein. \newline
+- Dokumentation: Wichtige Teile der Software müssen mit den richtigen UML-Diagrammen beschrieben werden: \newline 
+ - Entity-Relationship-Diagramm für die Business-Domain \newline
+ - Activity-Diagramm für die Synchronisierung des externen Fortschritts \newline
+- Dokumentation: Die Funktionsweise des Plugins muss im README des Projektes kurz aufgezeigt werden. \newline
+- Tests: Der Happy-Path muss automatisiert End-to-end getestet sein (System-Tests). \newline
+- Tests: Die Unit-Test-Abdeckung des Plugins beträgt 100\%. \newline
+- Tests: Zugriffe auf die GitHubl und die Semaphore-API müssen in den Tests gemockt werden. \newline
 
 \section{Mittel und Methoden}
-\lipsum[10]
+Für die IPA werden folgende Technologien eingesetzt: \newline
+- Redmine 4.x und 5.x (Plugin-Kompatibilität) \newline
+- Ruby on Rails 5.2 bis 7.0 (Plugin-Kompatibilität) \newline
+- MiniTest und Capybara \newline
+- Rubocop \newline
+- HTML5 (HTML, JS, CSS) \newline
+- Postgres \newline
+
+Die zu entwickelnde Software läuft auf dem Macbook des Kandidaten mit einem aktuellen Chrome-Browser. \newline
