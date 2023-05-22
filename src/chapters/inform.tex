@@ -53,8 +53,43 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
 \section{Systemaufbau}
 Im Folgenden wird die Einbettung des Systems in das Gesamtsystem gezeigt, sowie die vorhandenen Schnittstellen und Akteure beschrieben.
 
-\subsection{Gesamtsystem}
+\begin{minipage}{\textwidth}
+    \subsection{Gesamtsystem}
+    Das Gesamtsystem wird hier anhand eines Deployment-Diagramms dargestellt. Dieses zeigt die einzelnen Komponenten und deren Verbindungen.
+    \begin{center}
+        \includegraphics[width=0.8\textwidth]{images/deployment-diagram.png}
+        \label{fig:deployment-diagram}
+    \end{center}
+\end{minipage}
 
 \subsection{Schnittstellen}
+Dieses Kapitel beschreibt die in der Grafik \ref{fig:deployment-diagram} gezeigten Schnittstellen im Detail.
+Unter Schnittstellen gelten Elemente, welche ausserhalb des Plugins liegen.
+
+\subsubsection{SemaphoreCI}
+SemaphoreCI ist ein Dienst, welcher die CI/CD Pipeline für Projekte bereitstellt. Dieser hat ein
+\enquote{Notification} System, welches bei bestimmten Events (in diesem Fall Deployments) JSON Daten
+an eine URL sendet. In diesem Fall wird die URL vom Plugin bereitgestellt.
+
+\subsubsection{GitHub}
+GitHub ist ein Dienst, welcher die Versionsverwaltung für Projekte bereitstellt. Dieser hat, gleich wie
+SemaphoreCI, ein System, welches JSON Daten bei bestimmten Events verschickt. Der Unterschied hier ist, dass
+diese Daten das Plugin bei einer Pull Request erreichen, anstatt bei einem Deployment.
+
+\subsubsection{Database}
+Die Database repräsentiert die Datenbank, welche von der Redmine-Instanz verwendet wird. Diese kann dank
+Redmine (fast) jedes beliebige Datenbanksystem sein. In der Regel wird bei der Renuo AG PostgreSQL verwendet.
+
+\subsubsection{ActiveRecord}
+ActiveRecord ist ein ORM (Object Relational Mapper) für Ruby. Dieses stellt eine Schnittstelle zwischen der
+Datenbank und dem Rails Programm dar. Es wird verwendet, um die Datenbank zu abstrahieren und die Daten
+in Objekte zu konvertieren.
 
 \subsection{Akteure}
+\begin{tabularx}{\textwidth}[H]{|c|X|}
+  \hline
+  User & Der \enquote{User} ist der Redmine-Nutzer. Dieser kann eine beliebige Rolle haben (solang er die 
+  Issues lesen darf). \\ \hline
+  GitHub \& SemaphoreCI & Diese beiden Akteure sind die Dienste, welche auf die Schnittstellen zugreifen.
+  \\ \hline
+\end{tabularx}
