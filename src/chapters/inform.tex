@@ -85,6 +85,15 @@ ActiveRecord ist ein ORM (Object Relational Mapping) für Ruby. Dieses stellt ei
 Datenbank und dem Rails Programm dar. Es wird verwendet, um die Datenbank zu abstrahieren und die Daten
 in Objekte zu konvertieren.
 
+\subsection{Issues Controller}
+Der Issues Controller ist der von Redmine bereits vorhandene Controller, welcher für die Issues zuständig ist.
+Er kümmert sich um die Auflistung sowie detailierte Ansicht für Issues. Dieser Controller steht im System
+verbunden mit einem \enquote{Check for Hook} mit dem Plugin in Verbindung. Das bedeutet, dass das Plugin die
+Funktionalität des Controllers erweitert.
+
+\subsection{View}
+Die View ist das zurückgeschickte HTML vom Controller.
+
 \subsection{Akteure}
 \begin{tabularx}{\textwidth}[H]{|c|X|}
   \hline
