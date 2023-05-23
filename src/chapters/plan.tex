@@ -26,8 +26,27 @@ In diesem Abschnitt werden verschiedene Diagramme, welche zur bildlichen Darstel
 \section{Testkonzept}
 Das Testkonzept beschreibt, wie und mit welchen Werkzeugen das Resultat auf seine Richtigkeit kontrolliert wird.
 
-\subsection{Testmethoden}
-\subsubsection{Manuelle Tests}
-\subsubsection{Automatisierte Tests}
+\subsection{Automatisierte Tests}
+Es werden automatisierte Tests für das Plugin geschrieben, welche die Funktionalität der Applikation testen.
+Diese werden mit den gleichen Frameworks wie die vom Redmine geschrieben. Das heisst, dass die Tests mit
+folgenden Frameworks geschrieben werden:
+\begin{itemize}
+  \item \textbf{MiniTest} für die Unit-Tests
+  \item \textbf{Capybara} für die System-Tests
+\end{itemize}
+Die coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
+SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sowie eine Liste der
+fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
+\subsubsection{Weitere Tools}
+Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
+\begin{itemize}
+  \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
+  \item \textbf{FactoryBot} für das Initialisieren von Objekten.
+\end{itemize}
+Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automated-tests} dokumentiert.
+
+\subsection{Manuelle Tests}
+Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
+werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolliert.
 
 \subsection{Testmittel}
