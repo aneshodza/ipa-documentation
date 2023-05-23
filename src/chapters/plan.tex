@@ -52,7 +52,7 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
   Das Activity-Diagramm zeigt den Ablauf des Plugins. In diesem Fall gibt es zwei Abläufe:
   \begin{itemize}
     \item Hook von SemaphoreCI oder GitHub
-    \item Abfagen der Tickets \newline
+    \item Abfragen der Issues \newline
   \end{itemize}
 \end{minipage}
 
@@ -67,9 +67,13 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 \end{minipage}
 
 \begin{minipage}{\textwidth}
-  \subsubsection{Abfrage der Tickets}
-  Wenn der Nutzer Tickets abfragt, kann er entweder die Übersicht oder die Details eines Tickets abfragen. Das
-  Activity-Diagramm dazu sieht wie folgt aus:
+  \subsubsection{Abfrage der Issues}
+  Falls der Nutzer auf die Details eines Issues klickt, wird eine Abfrage an das Plugin gesendet, welches die Pull Requests sowie
+  Deployments abfragt und diese zurückgibt: \newline
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/activity/issues-view.png}
+    \label{fig:activity_issues}
+  \end{center}
 
 \end{minipage}
 
