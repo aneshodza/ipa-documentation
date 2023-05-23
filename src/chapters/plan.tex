@@ -21,7 +21,57 @@ Die Zeitplanung wird in der Abbildung \ref{fig:timeplan} oberhalb gezeigt. Die r
 \section{Diagramme}
 In diesem Abschnitt werden verschiedene Diagramme, welche zur bildlichen Darstellung des Systems dienen sollen.
 \subsection{Entity-Relationship-Diagram}
-\subsection{Activity-Diagram}
+Das ERD zeigt die Beziehungen zwischen den einzelnen Entitäten. Da diese PA nur ein Plugin ist, welches neben
+bereits bestehenden Entitäten seine eigenen erstellt, wird dort abgegrenzt. Nur Entitäten vom Plugin und
+deren Beziehungen werden im ERD dargestellt. \newline
+Hier werden zwei Optionen aufgezeigt und erklärt, welche im Kapitel \ref{chap:decide} (Entscheiden) ausgewertet werden. \newline
+Die Attribute wurden auf Basis der Semaphore Webhooks Dokumentation \cite{semaphore_webhooks} und der GitHub Webhooks
+Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Option 1: Mehrere Entitäten}
+  Die erste Option ist, dass für Deployments und Pull-Requests eigene Entitäten erstellt werden. Das würde wie folgt aussehen:
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/erd/multiple.png}
+    \label{fig:erd_multiple}
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Option 2: Inheritance}
+  Die zweite Option ist, dass für Deployments und Pull-Requests keine eigenen Entitäten erstellt werden, sondern diese von
+  einer gemeinsamen Entität erben. Das würde wie folgt aussehen:
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/erd/inheritance.png}
+    \label{fig:erd_inheritance}
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsection{Activity-Diagram}
+  Das Activity-Diagramm zeigt den Ablauf des Plugins. In diesem Fall gibt es zwei Abläufe:
+  \begin{itemize}
+    \item Hook von SemaphoreCI oder GitHub
+    \item Abfagen der Tickets \newline
+  \end{itemize}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Hook call}
+  Die Hook calls werden von SemaphoreCI oder GitHub ausgelöst. Beide bei unterschiedlichen Events, welche beide mit Sanduhren
+  dargestellt wurden:
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/activity/webhook.png}
+    \label{fig:activity_hook_call}
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Abfrage der Tickets}
+  Wenn der Nutzer Tickets abfragt, kann er entweder die Übersicht oder die Details eines Tickets abfragen. Das
+  Activity-Diagramm dazu sieht wie folgt aus:
+
+\end{minipage}
 
 \section{Testkonzept}
 Das Testkonzept beschreibt, wie und mit welchen Werkzeugen das Resultat auf seine Richtigkeit kontrolliert wird.
