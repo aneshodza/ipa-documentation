@@ -48,8 +48,42 @@ Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automate
 \subsection{Manuelle Tests}
 Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
 werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolliert.
-\subsubsection{Verarbeiten von SemaphoreCI Daten}
-\subsubsection{Verarbeiten von GitHub Daten}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Verarbeiten von SemaphoreCI Daten}
+  Um die Verarbeitung von SemaphoreCI Daten zu testen, gibt es zwei offensichtliche Möglichkeiten:
+  \begin{itemize}
+    \item \st{Senden von Daten per HTTP-Request an den lokalen Server}
+    \item Benützen des Dienstes, damit dieser die Daten schickt
+  \end{itemize}
+  \textbf{Senden von Daten per HTTP-Request an den lokalen Server} \\
+  Option eins ist das manuelle Senden von Daten an den lokalen Server. Dies kann man in der Konsole mit dem curl Programm
+  \cite{everything_curl} machen. Dies ist jedoch eine sehr aufwändige und ungenaue Art zu testen, weshalb diese Option nicht
+  weiter verfolgt wird. \newline
+
+  \textbf{Benützen des Dienstes, damit dieser die Daten schickt} \\
+  Die zweite Option ist, ein Repository auf GitHub zu erstellen und dieses mit SemaphoreCI zu verbinden. Es würde ein Deploy
+  Script aufgesetzt werden, welches die SemaphoreCI Hooks auslöst. \newline
+  Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel
+  erstellen, welcher eine öffentliche IP zur Verfügung stellt. \newline
+  Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Verarbeiten von GitHub Daten}
+  Auch die Verarbeitung der GitHub Daten kann man auf die gleiche Arten testen:
+  \begin{itemize}
+    \item \st{Senden von Daten per HTTP-Request an den lokalen Server}
+    \item Benützen des Dienstes, damit dieser die Daten schickt \newline
+  \end{itemize}
+  \textbf{Senden von Daten per HTTP-Request an den lokalen Server} \\
+  Die erste Option wird hier auch aus dem gleichen Grund wie bei SemaphoreCI nicht weiter verfolgt. \newline
+
+  \textbf{Benützen des Dienstes, damit dieser die Daten schickt} \\
+  Auch hier ist diese Option besser, da es zwar auch aufwändig ist, aber genauere Daten liefert. \newline
+  Das Repository muss nicht mehr mit SemaphoreCI verbunden werden, doch gleich wie bei den SemaphoreCI Tests, müsse man
+  mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel erstellen, welcher eine öffentliche IP zur Verfügung stellt.
+\end{minipage}
 \subsubsection{Der Nutzer schaut sich ein Ticket an mit Daten}
 \subsubsection{Der Nutzer schaut sich ein Ticket an ohne Daten}
 
