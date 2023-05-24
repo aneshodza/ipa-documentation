@@ -128,13 +128,13 @@ werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolli
   Da unter Kapitel \ref{sec:general-testing} etabliert wurde, dass die Dienste wirklich verwendet werden beim manuellen Testen,
   wird der Test nach folgenden Schritten durchgeführt:
   \begin{enumerate}
-    \item Erstellen eines Tickets auf Redmine
-    \item Erstellen eines Repositories auf GitHub
-    \item Verbinden des Repositories mit SemaphoreCI
-    \item Erstellen einer Pull Requests auf main (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
-    \item Die Pull Request mergen
+    \item Ein Issue auf Redmine erstellen
+    \item Auf GitHub ein Repository erstellen und dieses mit SemaphoreCI verbinden. 
+    (\textbf{Wichtig:} Es muss ein Deploy-Skript erstellt werden. Dieses heisst wie folgt:
+    [branchname]-deploy.sh)
+    \item Eine Pull Request erstellen und mergen.
     \item Warten, bis die Pipeline auf SemaphoreCI durchgelaufen ist
-    \item Auf dem Ticket kontrollieren, ob die Daten korrekt angezeigt werden
+    \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
   \end{enumerate}
 \end{minipage}
 
@@ -142,10 +142,12 @@ werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolli
   \subsubsection{Verarbeiten von GitHub Daten}
   Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
   \begin{enumerate}
-    \item Erstellen eines Tickets auf Redmine
-    \item Erstellen eines Repositories auf GitHub
-    \item Erstellen einer Pull Requests (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
-    \item Auf dem Ticket kontrollieren, ob die Daten korrekt angezeigt werden
+    \item Ein Issue auf Redmine erstellen
+    \item Auf GitHub ein Repository erstellen
+    \item Eine GitHub Webhook erstellen, welche bei PRs Daten schickt. (Die URL muss auf den lokalen Server zeigen)
+    \item Einen feature Branch erstellen (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
+    \item Eine Pull Request erstellen
+    \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
   \end{enumerate}
 \end{minipage}
 
