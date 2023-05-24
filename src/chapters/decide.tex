@@ -1,2 +1,70 @@
 \chapter{Entscheiden}
 \label{chap:decide}
+In diesem Kapitel werden Entscheidungen und dessen Begründungen dokumentiert. \newline
+Da diese PA ein Plugin für bereits etablierte Software ist, gibt es, vor allem bezüglich des Tech-Stacks, nicht viel zu
+entscheiden. Wie die zweite Software-Design Anforderung besagt: \enquote{Das Plugin soll sich an die Coding-Guidelines von
+Redmine halten...}
+
+\section{Bewertungen}
+\subsection{Entity-Relationship-Diagram}
+\subsubsection{Option 1: Mehrere Entitäten}
+Die erste Option, wie auf Grafik \ref{fig:erd_multiple} zu sehen, ist, dass für Deployments und Pull-Requests
+eigene Entitäten erstellt werden, welche beide direkt mit den Issues verbunden sind. \newline
+Die Vorteile dieser Option sind beispielsweise, dass die Komplexität der Datenstruktur gering ist. Es ist einfach zu
+implementieren und eventuellen späteren Entwicklern zu erklären. \newline
+Ein grosser Nachteil dieser Datenstruktur ist, dass wahrscheinlich zwei separate Kontroller erstellt werden müssen, was
+die Codebase unnötig vergrössert (aber nicht unbedingt Komplexität hinzufügt).
+
+\subsubsection{Option 2: Inheritance}
+Die zweite Option, wie auf Grafik \ref{fig:erd_inheritance} zu sehen, ist, dass für Deployments und Pull-Requests nur
+Child-Entitäten erstellt werden, welche beide von einer gemeinsamen Entität erben. \newline
+Der grösste Vorteil dieser Option ist, dass die Vererbung die Codebase vereinfachen kann, falls richtig implementiert.
+\newline
+Nachteile sind, dass die Komplexität der Datenstruktur massiv erhöht wird. Vererbung ist in Datenbanken nicht üblich, was
+implementationen davon erschwert. Rails würde dabei einen grossen Teil er Arbeit abnehmen, dennoch bleibt die Komplexität
+hoch.
+
+\subsubsection{Option 3: Has many through}
+\label{sec:decide_has_many_through}
+Die dritte und letzte Option, dargestellt auf Grafik \ref{fig:erd_has_many_through}, ist die am meisten an Rails angelehnte
+Methode. Dabei wäre ein Deployment nicht mehr mit dem Issue, sondern der Pull Request verbunden. Die Verbindung zwischen
+einem Issue und einem Deployment würde somit \enquote{durch} die Pull Request gehen. Deswegen das \enquote{through} im Namen.
+Diese Option ist möglich, da wir Pull Requests deployen und nicht Issues. \newline
+Vorteilhaftig wäre, dass die Datenstruktur besser die Realität abbildet. In der Realität wird eine Pull Request Deployed,
+was in der Datenstruktur auch so dargestellt wäre. \newline
+Ein grosses Problem an diesem Ansatz ist, dass diese Option sehr viel von der Datenbank lesen muss. Bei grossen Systemen
+kann das eventuell zu Performance-Problemen führen.
+
+\subsection{Activity-Diagram}
+Die Acticity-Diagramme unter Kapitel \ref{sec:activity_diagram} zeigen mehr oder weniger die einzige Möglichkeit auf den
+Prozess zu gestalten. Im Design dieses Projektes muss man sich viel externen Prozessen anpassen; Redmine gibt den
+Issue-Prozess vor und GitHub sowie SemaphoreCI die Webhook Prozesse.
+
+\subsection{Tech-Stack}
+Der Tech Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine verwendet. Ausserdem
+wird MiniTest mit Capybara für die Tests verwendet. \newline
+Das einzige, was selbst entschieden wird ist die Datenbank. Dort wird PostgreSQL verwendet.
+
+\subsection{UI}
+Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil selbst gestaltet. Die Mockups unter Kapitel
+\ref{sec:mockups} zeigen zwei Möglichkeiten bezüglich der UI auf. \newline
+Es gibt hier nicht viel zu entscheiden, da es eine Sache von persönlicher Präferenz ist. Dennoch haben beide Optionen
+Vor- und Nachteile. \newline
+
+\begin{minipage}{\textwidth}
+    \subsubsection{Option 1: Zwei Listen}
+    Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
+    die zweite darunter für Deployments. \newline
+    Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
+    gehört. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+    \subsubsection{Eine Liste mit Unterlisten}
+    Die zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
+    die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
+    Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
+    Pull Request einfacher zuzuordnen sind. \newline
+\end{minipage}
+
+\section{Entscheidungen}
