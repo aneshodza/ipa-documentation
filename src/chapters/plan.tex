@@ -9,7 +9,7 @@ In diesem Abschnitt werden verschiedene Diagramme präsentiert, welche zur bildl
 Das ERD zeigt die Beziehungen zwischen den einzelnen Entitäten. Da diese PA nur ein Plugin ist, welches neben
 bereits bestehenden Entitäten seine eigenen erstellt, wird dort abgegrenzt. Nur Entitäten vom Plugin und
 deren Beziehungen werden im ERD dargestellt. \newline
-Hier werden zwei Optionen aufgezeigt und erklärt, die im Kapitel \ref{chap:decide} (Entscheiden) ausgewertet werden. \newline
+Hier werden drei Optionen aufgezeigt und erklärt, die im Kapitel \ref{chap:decide} (Entscheiden) ausgewertet werden. \newline
 Die Attribute wurden auf Basis der Semaphore Webhooks Dokumentation \cite{semaphore_webhooks} und der GitHub Webhooks
 Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 
@@ -29,6 +29,16 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
   \begin{center}
     \includegraphics[width=0.8\textwidth]{images/erd/inheritance.png}
     \label{fig:erd_inheritance}
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Option 3: Has many through}
+  Die dritte Option ist, dass Deployments mit einer "has-many" Beziehung mit Pull-Requests verbunden werden. In diesem Fall hätte jedes
+  Issue mehrere Deployments "durch" die Pull-Requests. Daher der Name. Das würde wie folgt aussehen:
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/erd/has_many_through.png}
+    \label{fig:erd_has_many_through}
   \end{center}
 \end{minipage}
 
