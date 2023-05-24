@@ -77,24 +77,29 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 \label{sec:testkonzept}
 Das Testkonzept beschreibt, wie und mit welchen Werkzeugen das Resultat auf seine Richtigkeit kontrolliert wird.
 
-\subsection{Automatisierte Tests}
-Es werden automatisierte Tests für das Plugin geschrieben, welche die Funktionalität der Applikation testen.
-Diese werden mit den gleichen Frameworks wie die vom Redmine geschrieben. Das heisst, dass die Tests mit
-folgenden Frameworks geschrieben werden:
-\begin{itemize}
-  \item \textbf{MiniTest} für die Unit-Tests
-  \item \textbf{Capybara} für die System-Tests
-\end{itemize}
-Die coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
-SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sowie eine Liste der
-fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
-\subsubsection{Weitere Tools}
-Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
-\begin{itemize}
-  \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
-  \item \textbf{FactoryBot} für das Initialisieren von Objekten.
-\end{itemize}
-Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automated-tests} dokumentiert.
+\begin{minipage}{\textwidth}
+  \subsection{Automatisierte Tests}
+  Es werden automatisierte Tests für das Plugin geschrieben, welche die Funktionalität der Applikation testen.
+  Diese werden mit den gleichen Frameworks wie die vom Redmine geschrieben. Das heisst, dass die Tests mit
+  folgenden Frameworks geschrieben werden:
+  \begin{itemize}
+    \item \textbf{MiniTest} für die Unit-Tests
+    \item \textbf{Capybara} für die System-Tests
+  \end{itemize}
+  Die coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
+  SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sowie eine Liste der
+  fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Weitere Tools}
+  Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
+  \begin{itemize}
+    \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
+    \item \textbf{FactoryBot} für das Initialisieren von Objekten.
+  \end{itemize}
+  Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automated-tests} dokumentiert.
+\end{minipage}
 
 \subsection{Manuelle Tests}
 Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
@@ -136,10 +141,14 @@ werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolli
     \item Warten, bis die Pipeline auf SemaphoreCI durchgelaufen ist
     \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
   \end{enumerate}
+
+  \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment angezeigt wird. Das kann entweder grün oder rot
+  sein, je nachdem ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
 \end{minipage}
 
 \begin{minipage}{\textwidth}
   \subsubsection{Verarbeiten von GitHub Daten}
+  \label{sec:github-testing}
   Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
   \begin{enumerate}
     \item Ein Issue auf Redmine erstellen
@@ -149,10 +158,24 @@ werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolli
     \item Eine Pull Request erstellen
     \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
   \end{enumerate}
+
+  \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues eine Pull Request angezeigt wird. Da diese noch nicht gemerged
+  wurde, sollte es sichtbar sein, dass die Pull Request offen ist.
 \end{minipage}
 
-\subsubsection{Der Nutzer schaut sich ein Ticket an mit Daten}
-Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Ticket erstellt. 
-\subsubsection{Der Nutzer schaut sich ein Ticket an ohne Daten}
+\begin{minipage}{\textwidth}
+  \subsubsection{Der Nutzer schaut sich ein Issue an mit Daten}
+  Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. Daraufhin werden die Schritte aus
+  \ref{sec:github-testing} durchgeführt, damit das Issue mit Daten vom Plugin befüllt wird. \newline
+  \textbf{Das zu erwartende Resultat ist,} dass die offene Pull Request angezeigt wird. Das sollte ohne grosse Ladezeit passieren, wie von 
+  Software-Design Anforderung drei verlangt.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Der Nutzer schaut sich ein Issue an ohne Daten}
+  Für diesen Testfall wird einfach auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
+  kontrolliert, was angezeigt wird. \newline
+  \textbf{Das zu erwartende Resultat ist,} dass keine Daten angezeigt werden.
+\end{minipage}
 
 \subsection{Testmittel}
