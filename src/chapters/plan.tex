@@ -62,6 +62,25 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 \end{minipage}
 
 \begin{minipage}{\textwidth}
+  \subsubsection{SemaphoreCI Plan B}
+  Da SemaphoreCI in den Webhook Daten nicht alle Commit-Hashes, sondern nur eine Range, mitliefert, kann es sein, dass die
+  Informationen über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
+  SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen wie die Commit-Geschichte aussieht. So
+  ungefähr würde das aussehen: \newline
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/activity/semaphore-backup-hooks.png}
+    \label{fig:activity_plan_b}
+    \newline
+  \end{center}
+  Falls diese Option implementiert wird, ändert sich das Deployment Diagramm ganz leicht, da jetzt
+  eine neue Brücke vom Plugin zu GitHub existiert. In rot markiert ist die neue Brücke: \newline
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/deployment/backup-hooks.png}
+    \label{fig:activity_plan_b_deployment}
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
   \subsubsection{Abfrage der Issues}
   Falls der Nutzer auf die Details eines Issues klickt, wird eine Abfrage an das Plugin gesendet, welches die Pull Requests sowie
   Deployments abfragt und diese zurückgibt: \newline
