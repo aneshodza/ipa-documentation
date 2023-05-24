@@ -77,10 +77,27 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
   nur ungefähr wiedergeben, wie die UI aussehen soll. Da das Plugin auf einer bereits existierenden 
   Ansicht aufbaut, nämlich der Issue-View, wird diese nur sehr abstrahiert dargestellt. \newline
   Die bereits existierende Ansicht ist in der Abbildung mit weniger Opazität dargestellt. \newline
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{images/mockup/details.png}
-    \label{fig:mockup_details}
-  \end{center}
+
+  \begin{minipage}{\textwidth}
+    \subsubsection{Zwei Listen}
+    Option eins ist, dass die Pull-Requests und Deployments in zwei Listen dargestellt werden. Das würde ungefähr so
+    aussehen: \newline
+    \begin{center}
+      \includegraphics[width=0.8\textwidth]{images/mockup/multiple-lists.png}
+      \label{fig:mockup_multi_lists}
+      \newline
+    \end{center}
+  \end{minipage}
+
+  \begin{minipage}{\textwidth}
+    \subsubsection{Eine Liste mit Unterlisten}
+    Die zweite Option ist, dass die Pull Requests aufgelistet werden und die Deployments als Unterlisten aufgelistet
+    werden. So würde das aussehen: \newline
+    \begin{center}
+      \includegraphics[width=0.8\textwidth]{images/mockup/sublists.png}
+      \label{fig:mockup_sublists}
+    \end{center}
+  \end{minipage}
 \end{minipage}
 
 \section{Testkonzept}
