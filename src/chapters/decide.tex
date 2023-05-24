@@ -3,7 +3,9 @@
 In diesem Kapitel werden Entscheidungen und dessen Begründungen dokumentiert. \newline
 Da diese PA ein Plugin für bereits etablierte Software ist, gibt es, vor allem bezüglich des Tech-Stacks, nicht viel zu
 entscheiden. Wie die zweite Software-Design Anforderung besagt: \enquote{Das Plugin soll sich an die Coding-Guidelines von
-Redmine halten...}
+Redmine halten...} \newline
+Für das Bewerten wurden alle Optionen vorgelegt und kurz beschrieben. Dann wurde mit einer Entscheidungsmatrix
+bewertet und gewählt. \newline
 
 \section{Bewertungen}
 \subsection{Entity-Relationship-Diagram}
@@ -68,3 +70,46 @@ Vor- und Nachteile. \newline
 \end{minipage}
 
 \section{Entscheidungen}
+\begin{minipage}{\textwidth}
+    \subsection{Entity-Relationship-Diagram}
+    \subsubsection{Bewertungsmatrix}
+    \begin{center}
+        \resizebox{0.75\textwidth}{!}{%
+            \begin{tabular}{|c|c|c|c|c|}
+                \hline
+                \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Option 1} & \textbf{Option 2} & \textbf{Option 3} \\ \hline
+                Einfachheit & 30\% & 7.5 & 5 & 7 \\ \hline
+                Realitätsnähe & 35\% & 5 & 7.5 & 10 \\ \hline
+                Erweiterbarkeit & 35\% & 7.5 & 5 & 8 \\ \hline
+                \textbf{Total} & --- & 6.625 & 5.875 & 8.4 \\ \hline
+            \end{tabular}%
+        }
+    \end{center}
+    \subsubsection{Entscheidung}
+    Die Entscheidung fiel auf die dritte Option (Kapitel \ref{sec:decide_has_many_through}), da diese die Realität am besten
+    abbildet, es einfacher zu erweitern ist und die Implementation ausserdem nicht sehr komplex ist. \newline
+    Langfristig wird die Codebase dadurch profitieren, da die Datenstruktur einfacher zu verstehen ist und die Komplexität
+    tiefer ist. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+    \subsection{Mockups}
+    \subsubsection{Bewertungsmatrix}
+    \begin{center}
+        \resizebox{0.75\textwidth}{!}{%
+            \begin{tabular}{|c|c|c|c|}
+                \hline
+                \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Zwei Listen} & \textbf{Unterlisten} \\ \hline
+                Übersichtlichkeit & 40\% & 8 & 7 \\ \hline
+                Zuordnung & 50\% & 6 & 10 \\ \hline
+                Ästhetik & 10\% & 8 & 9 \\ \hline
+                \textbf{Total} & --- & 7 & 8.7 \\ \hline
+            \end{tabular}%
+        }
+    \end{center}
+
+    \subsubsection{Entscheidung}
+    Option zwei, aus Grafik \ref{fig:mockup_sublists}, wurde gewählt, da die Deployments besser zu den Pull Requests
+    zugeordnet werden können. Der Nachteil ist, dass es sehr schnell sehr unübersichtlich werden kann, doch in der Realität
+    hat es zu jedem Issue meistens eine Pull Request, weshalb das kein grosses Problem darstellt.
+\end{minipage}
