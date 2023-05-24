@@ -87,8 +87,114 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 \label{sec:testkonzept}
 Das Testkonzept beschreibt, wie und mit welchen Werkzeugen das Resultat auf seine Richtigkeit kontrolliert wird.
 
-\subsection{Testmethoden}
-\subsubsection{Manuelle Tests}
-\subsubsection{Automatisierte Tests}
+\begin{minipage}{\textwidth}
+  \subsection{Automatisierte Tests}
+  Es werden automatisierte Tests für das Plugin geschrieben, welche die Funktionalität der Applikation testen.
+  Diese werden mit den gleichen Frameworks wie die vom Redmine geschrieben. Das heisst, dass die Tests mit
+  folgenden Frameworks geschrieben werden:
+  \begin{itemize}
+    \item \textbf{MiniTest} für die Unit-Tests
+    \item \textbf{Capybara} für die System-Tests
+  \end{itemize}
+  Die coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
+  SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sowie eine Liste der
+  fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
+\end{minipage}
 
-\subsection{Testmittel}
+\begin{minipage}{\textwidth}
+  \subsubsection{Weitere Tools}
+  Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
+  \begin{itemize}
+    \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
+    \item \textbf{FactoryBot} für das Initialisieren von Objekten.
+  \end{itemize}
+  Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automated-tests} dokumentiert.
+\end{minipage}
+
+\subsection{Manuelle Tests}
+Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
+werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolliert.
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Allgemeiner Vorgang}
+  \label{sec:general-testing}
+  Um die Funktionalität des Plugins zu testen, muss eine eintreffende Webhook von SemaphoreCI oder GitHub simuliert werden.
+  Dabei hat man zwei Optionen:
+  \begin{itemize}
+    \item \st{Senden von Daten per HTTP-Request an den lokalen Server}
+    \item Benützen des Dienstes, damit dieser die Daten schickt
+  \end{itemize}
+
+  \textbf{Senden von Daten per HTTP-Request an den lokalen Server} \\
+  Option eins ist das manuelle Senden von Daten an den lokalen Server. Dies kann man in der Konsole mit dem curl Programm
+  \cite{everything_curl} machen. Dies ist jedoch eine sehr aufwändige und ungenaue Art zu testen, weshalb diese Option nicht
+  weiter verfolgt wird. \newline
+
+  \textbf{Benützen des Dienstes, damit dieser die Daten schickt} \\
+  Die zweite Option ist, ein Repository auf GitHub zu erstellen und dieses mit SemaphoreCI / Github Webhooks zu
+  verbinden. \newline
+  Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel
+  erstellen, welcher eine öffentliche IP zur Verfügung stellt. \newline
+  Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Verarbeiten von SemaphoreCI Daten}
+  Da unter Kapitel \ref{sec:general-testing} etabliert wurde, dass die Dienste wirklich verwendet werden beim manuellen Testen,
+  wird der Test nach folgenden Schritten durchgeführt:
+  \begin{enumerate}
+    \item Ein Issue auf Redmine erstellen
+    \item Auf GitHub ein Repository erstellen und dieses mit SemaphoreCI verbinden. 
+    (\textbf{Wichtig:} Es muss ein Deploy-Skript erstellt werden. Dieses heisst wie folgt:
+    [branchname]-deploy.sh)
+    \item Eine Pull Request erstellen und mergen.
+    \item Warten, bis die Pipeline auf SemaphoreCI durchgelaufen ist
+    \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
+  \end{enumerate}
+
+  \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment angezeigt wird. Das kann entweder grün oder rot
+  sein, je nachdem ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Verarbeiten von GitHub Daten}
+  \label{sec:github-testing}
+  Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
+  \begin{enumerate}
+    \item Ein Issue auf Redmine erstellen
+    \item Auf GitHub ein Repository erstellen
+    \item Eine GitHub Webhook erstellen, welche bei PRs Daten schickt. (Die URL muss auf den lokalen Server zeigen)
+    \item Einen feature Branch erstellen (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
+    \item Eine Pull Request erstellen
+    \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
+  \end{enumerate}
+
+  \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues eine Pull Request angezeigt wird. Da diese noch nicht gemerged
+  wurde, sollte es sichtbar sein, dass die Pull Request offen ist.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Der Nutzer schaut sich ein Issue an mit Daten}
+  Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. Daraufhin werden die Schritte aus
+  \ref{sec:github-testing} durchgeführt, damit das Issue mit Daten vom Plugin befüllt wird. \newline
+  \textbf{Das zu erwartende Resultat ist,} dass die offene Pull Request angezeigt wird. Das sollte ohne grosse Ladezeit passieren, wie von 
+  Software-Design Anforderung drei verlangt.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{Der Nutzer schaut sich ein Issue an ohne Daten}
+  Für diesen Testfall wird einfach auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
+  kontrolliert, was angezeigt wird. \newline
+  \textbf{Das zu erwartende Resultat ist,} dass keine Daten angezeigt werden.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsection{Testmittel}
+  Als Testmittel werden folgende Tools verwendet:
+  \begin{itemize}
+    \item \textbf{Redmine} für das Erstellen von Issues
+    \item \textbf{GitHub} für das Erstellen von Repositories und Pull Requests
+    \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
+    \item \textbf{ngrok} für das Erstellen von HTTP Tunnels
+  \end{itemize}
+\end{minipage}
