@@ -13,7 +13,7 @@ eigene Entitäten erstellt werden, welche beide direkt mit den Issues verbunden 
 Die Vorteile dieser Option sind beispielsweise, dass die Komplexität der Datenstruktur gering ist. Es ist einfach zu
 implementieren und eventuellen späteren Entwicklern zu erklären. \newline
 Ein grosser Nachteil dieser Datenstruktur ist, dass wahrscheinlich zwei separate Kontroller erstellt werden müssen, was
-die Codebase unnötig vergrössert (aber nicht unbedingt Komplexität hinzufügt). \newline
+die Codebase unnötig vergrössert (aber nicht unbedingt Komplexität hinzufügt).
 
 \subsubsection{Option 2: Inheritance}
 Die zweite Option, wie auf Grafik \ref{fig:erd_inheritance} zu sehen, ist, dass für Deployments und Pull-Requests nur
@@ -25,6 +25,7 @@ implementationen davon erschwert. Rails würde dabei einen grossen Teil er Arbei
 hoch.
 
 \subsubsection{Option 3: Has many through}
+\label{sec:decide_has_many_through}
 Die dritte und letzte Option, dargestellt auf Grafik \ref{fig:erd_has_many_through}, ist die am meisten an Rails angelehnte
 Methode. Dabei wäre ein Deployment nicht mehr mit dem Issue, sondern der Pull Request verbunden. Die Verbindung zwischen
 einem Issue und einem Deployment würde somit \enquote{durch} die Pull Request gehen. Deswegen das \enquote{through} im Namen.
