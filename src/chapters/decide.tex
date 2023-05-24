@@ -29,7 +29,7 @@ Die dritte und letzte Option, dargestellt auf Grafik \ref{fig:erd_has_many_throu
 Methode. Dabei wäre ein Deployment nicht mehr mit dem Issue, sondern der Pull Request verbunden. Die Verbindung zwischen
 einem Issue und einem Deployment würde somit \enquote{durch} die Pull Request gehen. Deswegen das \enquote{through} im Namen.
 Diese Option ist möglich, da wir Pull Requests deployen und nicht Issues. \newline
-Vorteilhaftig wäre, dass die Datenstruktur besser die Realität abbildet. In der Realität wird eine Pull Request deployed,
+Vorteilhaftig wäre, dass die Datenstruktur besser die Realität abbildet. In der Realität wird eine Pull Request Deployed,
 was in der Datenstruktur auch so dargestellt wäre. \newline
 Ein grosses Problem an diesem Ansatz ist, dass diese Option sehr viel von der Datenbank lesen muss. Bei grossen Systemen
 kann das eventuell zu Performance-Problemen führen.
@@ -38,5 +38,32 @@ kann das eventuell zu Performance-Problemen führen.
 Die Acticity-Diagramme unter Kapitel \ref{sec:activity_diagram} zeigen mehr oder weniger die einzige Möglichkeit auf den
 Prozess zu gestalten. Im Design dieses Projektes muss man sich viel externen Prozessen anpassen; Redmine gibt den
 Issue-Prozess vor und GitHub sowie SemaphoreCI die Webhook Prozesse.
+
+\subsection{Tech-Stack}
+Der Tech Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine verwendet. Ausserdem
+wird MiniTest mit Capybara für die Tests verwendet. \newline
+Das einzige, was selbst entschieden wird ist die Datenbank. Dort wird PostgreSQL verwendet.
+
+\subsection{UI}
+Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil selbst gestaltet. Die Mockups unter Kapitel
+\ref{sec:mockups} zeigen zwei Möglichkeiten bezüglich der UI auf. \newline
+Es gibt hier nicht viel zu entscheiden, da es eine Sache von persönlicher Präferenz ist. Dennoch haben beide Optionen
+Vor- und Nachteile. \newline
+
+\begin{minipage}{\textwidth}
+    \subsubsection{Option 1: Zwei Listen}
+    Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
+    die zweite darunter für Deployments. \newline
+    Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
+    gehört. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+    \subsubsection{Eine Liste mit Unterlisten}
+    Die zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
+    die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
+    Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
+    Pull Request einfacher zuzuordnen sind. \newline
+\end{minipage}
 
 \section{Entscheidungen}
