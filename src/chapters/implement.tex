@@ -108,5 +108,187 @@ create  plugins/gnosis/test/test_helper.rb
 
 \begin{minipage}{\textwidth}
   \subsection{Erstellen des README}
-
+  Beim Erstellen des Plugins wurde automatisch ein \enquote{README.rdoc} erstellt. Dieses wird bei Ruby Projekten
+  oft anstatt eines \enquote{README.md} verwendet. Da diese PA nach Vorgaben von Redmine arbeitet, wird auch das
+  README im rdoc Format geschrieben. \newline
+  Da noch nicht viel im Projekt steht, wird nur beschrieben was genau das Plugin kann und wie es funktioniert. \newline
 \end{minipage}
+
+\subsection{Aufsetzen der CI/CD Pipeline}
+Die CI/CD wird auf SemaphoreCI eingerichtet, weshalb wir uns dort anmelden und ein neues Projekt erstellen. Man kann dieses
+direkt mit GitHub verbinden und Semaphore die meiste Arbeit machen lassen.
+
+\subsubsection{Erstellen der \enquote{bin files}}
+Da die Tests sowie Linter immer wieder ausgeführt werden, ist es sinnvoll diesen Prozess zu automatisieren. Dazu werden 
+\enquote{bin files} erstellt. Diese sind kleine Bash-Scripts, welche repeditive Aufgaben automatisieren. In unserem Fall sind
+das die Ausführungen von den Tests und Lintern sowie das aufsetzen des Projektes. \newline
+
+\begin{minipage}{\textwidth}
+  Für die Tests wird ein \bgmintinline{bash}{bin/test} mit folgendem Inhalt erstellt:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+#!/bin/bash
+
+white='\033[1;37m'
+red='\033[0;31m'
+green='\033[0;32m'
+
+rake redmine:plugins:test
+
+if [[ $? -eq 0 ]]; then
+  echo -e "${green}----------------------------------------"
+  echo -e "Tests passed"
+  echo -e "----------------------------------------${white}"
+else
+  echo -e "${red}----------------------------------------"
+  echo -e "Tests failed"
+  echo -e "----------------------------------------${white}"
+  exit 1
+fi
+    \end{minted}
+  \end{codebox}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  Dann braucht es ein \bgmintinline{bash}{bin/fastcheck} für linter und so weiter mit folgendem Inhalt:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+#!/bin/bash
+
+white='\033[1;37m'
+red='\033[0;31m'
+green='\033[0;32m'
+
+function return_code {
+  if [ $? -ne 0 ]; then
+    echo -e "${red} Error: $1 found errors! ${white}"
+    failing_checks+=("$1")
+    passing=false
+  fi
+}
+
+passing=true
+failing_checks=()
+
+echo "Executing fastchecks..."
+
+if [[ $* == *--fix* ]]; then
+  echo "Fixing..."
+  bundle exec rubocop -a --config .rubocop.yml
+  return_code "Rubocop"
+else 
+  echo "Note: You can use --fix to fix the errors automatically"
+  bundle exec rubocop --config .rubocop.yml
+  return_code "Rubocop"
+fi
+
+bundle exec brakeman -q -z --no-summary --no-pager
+return_code "Brakeman"
+
+if [ "$passing" = true ]; then
+  echo -e "${green}----------------------------------------"
+  echo -e "All checks passed"
+  echo -e "----------------------------------------${white}"
+  exit 0
+  else
+  echo -e "${red}----------------------------------------"
+  echo -e "Some checks failed"
+  echo -e "Failed checks: ${failing_checks[@]}"
+  echo -e "----------------------------------------${white}"
+  exit 1
+fi
+    \end{minted}
+  \end{codebox}
+  
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  Dann braucht es ein \bgmintinline{bash}{bin/setup} für das aufsetzen des Projektes mit folgendem Inhalt:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+yarn install
+bundle exec rake redmine:plugins:migrate
+    \end{minted}
+  \end{codebox}
+\end{minipage}
+
+\subsubsection{Erstellen der \enquote{semaphore.yml} Datei}
+Was wir noch machen müssen, ist die \bgmintinline{bash}{semaphore.yml} Datei zu erstellen. Diese muss ungefähr folgenden Ablauf
+ausführen:
+\begin{enumerate}
+  \item Redmine klonen und Aufsetzen
+  \item Postgres starten
+  \item Datenbank erstellen und migrieren
+  \item In das Plugins directory wechseln
+  \item Plugin klonen
+  \item Tests ausführen
+\end{enumerate}
+
+\begin{minipage}{\textwidth}
+  Auf einem Activity Diagramm würde das so aussehen: \newline
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/activity/ci-cd.png}
+    \label{fig:activity_ci_cd}
+    \newline
+  \end{center}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  Die oben beschriebene semaphore.yml Datei sieht dann so aus:
+  \begin{codebox}[]
+    \begin{minted}{yaml}
+version: v1.0
+name: Initial Pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2004
+blocks:
+  - name: Checks
+    task:
+      jobs:
+        - name: Tests
+          commands:
+            - bin/test
+        - name: Linter
+          commands:
+            - bin/fastcheck
+      prologue:
+        commands:
+          - 'git clone git@github.com:redmine/redmine.git'
+          - cd redmine
+          - cp config/configuration.yml.example config/configuration.yml
+          - 'git clone git@github.com:aneshodza/redmine-postgres-database-yml.git'
+          - cp redmine-postgres-database-yml/database.yml config/database.yml
+          - rm -rf redmine-postgres-database-yml
+          - bin/bundle install
+          - yarn
+          - sem-service start postgres --username="root" --password=""
+          - 'bin/rails db:create'
+          - 'bin/rails db:migrate'
+          - cd plugins
+          - checkout
+          - cd ../../
+          - bin/bundle install
+          - cd plugins/gnosis
+          - bin/setup
+    \end{minted}
+  \end{codebox}
+  \textbf{Wichtig:} Auf Zeile 22 wird von einem Repository geklont. Das hat den Grund, dass das
+  \bgmintinline{bash}{database.example.yml} nicht mit der MySQL Version von SemaphoreCI kompatibel ist. Das führt dazu,
+  dass die Migrationen nicht durchlaufen können, wie in diesem StackOverflow issue beschrieben: \newline
+  \url{https://stackoverflow.com/questions/63158705/rails-migration-mysql2error-specified-key-was-too-long-max-key-length-is-7}
+  \newline
+  Deswegen wird eine eigene Datenbank-Konfiguration verwendet.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  Nachdem das alles erledigt wurde, wird schnell ersichtlich, ob alles richtig ist oder nicht. In diesem Fall soll die CI
+  grün sein: \newline
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{images/misc/ci-passed.png}
+    \label{fig:semaphore_ci_passed}
+    \newline
+  \end{center}
+\end{minipage}
+
