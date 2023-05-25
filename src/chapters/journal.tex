@@ -6,21 +6,18 @@
 \begin{tabularx}{\textwidth}[H]{|c|X|}
   \hline
   Gearbeitete Zeit & 8.92h \\ \hline
-  Erledigte Arbeiten & Heute wurde die PA gestartet. Ich fing damit an, die Dokumentation anhand vom Template
-  \cite{Buhler_ipa-template_2022} zu erstellen. Danach kümmerte ich mich um die allgemeinen Informationen und die
-  Aufgabenstellung vom PkOrg. Von dort kopierte ich auch verschiedene Texte, wie zum Beispiel die
-  Deklarationen (Kapitel \ref{chap:declaration}). \newline
+  Erledigte Arbeiten & Heute wurde die PA gestartet. Es wurde damit begonnen, die Dokumentation anhand vom Template
+  \cite{Buhler_ipa-template_2022} zu erstellen. Danach wurden allgemeine Informationen vom PkOrg kopiert, wie zum
+  Beispiel die Deklarationen (Kapitel \ref{chap:declaration}).
   Dann wurde der Zeitplan mit den Arbeitspaketen erstellt, die Zusammenfassung der Aufgabe und die
-  Firmenstandards.
-  \\ \hline
+  Firmenstandards. \\ \hline
   Ungeplante Arbeiten & Keine. \\ \hline
-  Erfolge & Die Basis für die Dokumentation steht bereits und ich bin momentan perfekt auf dem Zeitplan. \newline
-  Ausserdem komme ich massiv besser mit LaTeX zurecht, als ich erwartet habe.
+  Erfolge & Die Basis für die Dokumentation steht bereits und wurde in Vereinbarung mit dem Zeitplan erledigt. Ausserdem stellte
+  sich heraus, dass LaTeX eine sehr gute Wahl für die Dokumentation ist.
   \\ \hline
   Misserfolge & Das Korrigieren von Rechtschreibfehlern geht länger als vorher geplant.  \\ \hline
-  Hilfestellungen & Die LaTeX Dokumentation von Overleaf \cite{overleaf} war mir eine grosse
-  Hilfe, da ich noch eher unbekannt bin mit LaTeX. \\
-  \hline
+  Hilfestellungen & Die LaTeX Dokumentation von Overleaf \cite{overleaf} wurde genutzt, um bei LaTeX besser durchblicken zu
+  können \\ \hline
 \end{tabularx}
 
 \newpage
@@ -35,14 +32,14 @@
   externen Schnittstellen. Zu Ende wurde allgemein an der Dokumentation gearbeitet, wie
   im Zeitplan eingetragen. \\ \hline
   Ungeplante Arbeiten & Unerwartet begann die Arbeit am Testkonzept bereits. Das passierte,
-  da ich eine Frage an die VF hatte, aber diese am Vormittag nicht erreichbar war. Nachdem
+  da der VF eine Frage gestellt werden musste, aber diese am Vormittag nicht erreichbar war. Nachdem
   die Unklarheiten aus dem Web geräumt wurden, ging die Arbeit wie geplant weiter.
   \\ \hline
-  Erfolge & Dank der Arbeit am Testkonzept konnte ich mir einen kleinen Vorsprung zum
+  Erfolge & Dank der Arbeit am Testkonzept entstand ein kleiner Vorsprung zum
   Zeitplan machen. Die gewonnene Zeit kann gut als Puffer beim Implementieren genutzt werden.
   \\ \hline
   Misserfolge & Heute gab es keine Misserfolge \\ \hline
-  Hilfestellungen & Die VF erklärte mir Software-Design Anforderung 3: \enquote{Die 
+  Hilfestellungen & Die VF erklärte die Software-Design Anforderung 3: \enquote{Die 
   Informationen müssen beim öffnen der Ticket-Ansicht schon verfügbar sein}.  \\ \hline
 \end{tabularx}
 
@@ -51,12 +48,33 @@
 \section{Tag 3}
 \begin{tabularx}{\textwidth}[H]{|c|X|}
   \hline
-  Erledigte Arbeiten & \lipsum[23] \\ \hline
-  Ungeplante Arbeiten & \lipsum[24] \\ \hline
-  Erfolge & \lipsum[25] \\ \hline
-  Misserfolge & \lipsum[26] \\ \hline
-  Hilfestellungen & \lipsum[27] \\
-  \hline
+  Gearbeitete Zeit & 8.75h \\ \hline
+  Erledigte Arbeiten & Der Tag begann damit, die Diagramme vom Vortag leicht auszubessern. Zu
+  Beginn wurde das Activity Diagramm unter \ref{fig:activity_hook_call} angepasst, da es nicht
+  ganz realitätsgetreu war. Dann wurde noch ein Vorschlag für das ERD unter
+  \ref{fig:erd_has_many_through} hinzugefügt. Die ERD Anpassung ergab sich aus der Anpassung
+  vom Activity Diagramm\newline
+  Danach wurde das Testkonzept unter Kapitel \ref{sec:testkonzept} finalisiert. Da Arbeit bereits
+  am Vortag begonnen wurde, mussten nur die manuellen Testfälle (\ref{sec:manual-tests}) noch erstellt
+  werden. \newline
+  Dann wurden wieder Änderungen an den Diagrammen vorgenommen. Als erstes wurde ein neues Mockup
+  (Grafik \ref{fig:mockup_sublists}) hinzugefügt, welches den dritten (neuen) Vorschlag für das ERD
+  besser darstellt. Dank den neuen Informationen ergab sich auch, dass das geplante Activity Diagramm
+  für die SemaphoreCI Webhook eventuell nicht umsetzbar ist, weshalb ein \enquote{Fallback Plan}
+  erstellt wurde. Dieser wurde mit Grafik \ref{fig:activity_plan_b} dargestellt. \newline
+  Dann wurde endlich am Bewerten gearbeitet. Dieses Kapitel wurde auch schon abgeschlossen, weshalb
+  das Entscheiden schon zum Teil erledigt werden konnte. \newline
+  Zum Schluss war der Expertenbesuch, welcher unter \ref{sec:first-expert-meeting} dokumentiert wurde.
+  Da sich beim Meeting herausstellte, dass die Anforderung zum Glossar nicht ganz verstanden wurden,
+  wurde diese nochmals angepasst. \\ \hline
+  Ungeplante Arbeiten & Es wurde viel Arbeit an den Diagrammen erledigt, was so nicht geplant war. Ausserdem
+  begann die Arbeit am Entscheiden selbst, da das Auswerten erledigt wurde. Beides war für den nächsten Tag
+  geplant. \\ \hline
+  Erfolge & Obwohl viel vom Vortag korrigiert wurde, war es möglich einen Vorsprung zum Zeitplan aufzubauen.
+  Ein anderer Erfolg ist, dass das der erste Expertenbesuch erledigt wurde und der HEX zufrieden scheint. \\ \hline
+  Misserfolge & Viele Diagramme mussten geändert werden, da neue Informationen erlangt wurden. Das ein backup
+  Plan für die SemaphoreCI Webhooks erstellt werden musste ist auch ein bisschen Sorgen bereitend. \\ \hline
+  Hilfestellungen & Der HEX wurde nach einer Erläuterung zum Glossar gefragt. \\ \hline
 \end{tabularx}
 
 \newpage
