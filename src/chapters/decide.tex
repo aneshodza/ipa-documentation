@@ -43,9 +43,9 @@ Prozess zu gestalten. Im Design dieses Projektes muss man sich viel externen Pro
 Issue-Prozess vor und GitHub sowie SemaphoreCI die Webhook Prozesse.
 
 \subsection{Tech-Stack}
-Der Tech Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine verwendet. Ausserdem
+Der Tech-Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine verwendet. Ausserdem
 wird MiniTest mit Capybara für die Tests verwendet. \newline
-Das einzige, was selbst entschieden wird ist die Datenbank. Dort wird PostgreSQL verwendet.
+Die einzige Freiheit, welche geboten wird ist die Wahl der Datenbank.
 
 \subsection{UI}
 Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil selbst gestaltet. Die Mockups unter Kapitel
@@ -90,6 +90,22 @@ Vor- und Nachteile. \newline
     abbildet, es einfacher zu erweitern ist und die Implementation ausserdem nicht sehr komplex ist. \newline
     Langfristig wird die Codebase dadurch profitieren, da die Datenstruktur einfacher zu verstehen ist und die Komplexität
     tiefer ist. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+    \subsection{Activity Diagramme}
+    Zu den Activity Diagrammen gibt es nichts zu entscheiden, ausser wie SemaphoreCI implementiert wird,
+    da wahrscheinlich ein Backup-Plan nötig ist. \newline
+    Momentan fehlen Informationen darüber, ob die Implementation möglich ist, weshalb die GitHub Implementation als erstes
+    stattfinden wird. Danach wird während der Implementation von SemaphoreCI entschieden, ob es möglich ist oder nicht. Falls
+    nicht, wird der Backup-Plan implementiert. \newline
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+    \subsection{Tech-Stack}
+    Die Entscheidung für den Tech-Stack ist bereits gefallen, da Redmine diesen vorgibt. \newline
+    Die Datenbank für die CI, sowie das lokale testen wird PostgreSQL sein, da dass der Standard bei der Renuo AG ist.
+    \newline
 \end{minipage}
 
 \begin{minipage}{\textwidth}
