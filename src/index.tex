@@ -16,6 +16,11 @@
 \newcommand{\varExaminationBoard}{Prüfungskomission 19} % Prüfungsorganisation
 \newcommand{\varExaminationBoardDepartment}{Informatik Applikationsentwicklung} % Fachrichtung
 
+% change minted style
+\newcommand{\bgmintinline}[2]{%
+  \colorbox{gray!20}{\mintinline{#1}{#2}}%
+}
+
 % apply ipa package
 \usepackage{../lib/ipa}
 \usepackage{../lib/tikz-uml}
