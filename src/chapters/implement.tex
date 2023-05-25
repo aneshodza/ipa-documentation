@@ -32,38 +32,78 @@ let bubbleSort = (inputArr) => {
 \section{Entwicklungsumgebung}
 \subsection{Versionierung}
 Für die Versionierung wird Git verwendet. Dabei wird GitHub als Remote-Repository verwendet. Das Repository mit
-dem Source-Code kann unter \url{https://github.com/aneshodza/gnosis} gefunden werden. \newline
-Damit lokal gearbeitet werden kann wird das Projekt mit \mintinline{bash}{git clone <ssh-link>} lokal geklont.
+dem Source-Code kann unter \url{https://github.com/aneshodza/gnosis} gefunden werden.
 
 \subsection{IDE}
-Als IDE wird vim mit verschiedenen Plugins verwendet. Bestimmte Sachen wurden in der \mintinline{bash}{.vimrc} Datei
+Als IDE wird vim mit verschiedenen Plugins verwendet. Bestimmte Sachen wurden in der \bgmintinline{bash}{.vimrc} Datei
 konfiguriert, damit die Arbeit möglichst effizient ist. \newline
 Diese Konfigurationen sind unter \newline
 \url{https://github.com/aneshodza/.dotfiles/blob/ad87ee9ecc5588a59d66e211797792099569ca95/.vimrc} zu finden.
 
 \subsection{CI/CD}
 Für die CI/CD Pipeline wird SemaphoreCI verwendet. Das ist passend, da auch die PA sehr eng mit SemaphoreCI verbunden
-ist. \newline
+ist.
 
 \begin{minipage}{\textwidth}
   \section{Aufsetzen des Projektes}
   Zu Beginn wird Arbeitspaket 7, Aufestzen des Projektes, implementiert. Dazu sind folgende Schritte zu befolgen:
   \begin{enumerate}
+    \item Erstellen des Plugins
     \item Erstellen des Remote-Repository
     \item Mit dem README beginnen
-    \item Erstellen des Plugins
     \item Aufsetzen der CI/CD Pipeline \newline
   \end{enumerate}
 \end{minipage}
 
 \begin{minipage}{\textwidth}
-  \subsection{Erstellen des Repository}
+  \subsection{Erstellen des Plugins}
+  Um das Plugin aufzusetzen begeben wir uns in das Verzeichnis der Lokalen Redmine Instanz. Diese wurde in den
+  Vorarbeiten bereits erstellt und aufgesetzt. \newline
+  Dort wird mit dem Befehl \bgmintinline{bash}{bundle exec rake generate redmine_plugin gnosis} das Plugin erstellt. Der
+  Konsolen-Output sieht wie folgt aus:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+> bundle exec rails generate redmine_plugin gnosis
+create  plugins/gnosis/app
+# Lots of things being created...
+create  plugins/gnosis/README.rdoc
+# Lots of things being created...
+create  plugins/gnosis/test/test_helper.rb
+    \end{minted}
+  \end{codebox}
+
+  Wenn wir dann mit \bgmintinline{bash}{cd plugins/gnosis} in das Plugin wechseln, sehen wir, dass bestimmte Dateien
+  bereits wurden. Diese werden bei Gebrauch erklärt und aufgezeigt.
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsection{Erstellen \& Konfigurieren des Repository}
   Das Projekt wird auf GitHub mit Git Versionsverwaltet, weshalb als Erstes ein GitHub Remote-Repository (auch einfach
   Repository genannt) erstellt werden muss. Das wird nach GitHub Dokumentation gemacht \cite{github_create_repo}.
-  \subsubsection{Namensgebung}
-  Das Repository sowie Projekt werden \enquote{gnosis} genannt. Dieser Name kommt aus dem Altgriechischen und bedeutet
-  \enquote{Wissen}. Der Name wurde gewählt, da das Projekt dem Nutzer Wissen über den Development-Stand des Projektes
-  vermitteln soll. 
+
+  \subsubsection{Erstellen des Lokalen Repostiory}
+  Danach muss das lokale Plugin mit dem Repository verbunden werden. Dazu müssen wir mit der Konsole in das Directory
+  unseres Plugin wechseln, welches unter \menu{redmine/plugins/gnosis} zu finden ist. \newline
+  Dort initialisieren wir das lokale Repository mit \bgmintinline{bash}{git init} und verbinden es mit dem Remote
+  Repository indem wir \bgmintinline{bash}{git remote add origin [URL]} ausführen.
+
+  \subsubsection{Initial Commit}
+  Nun können wir den ersten Commit machen. Das können wir ganz einfach mit wenigen Befehlen machen:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+> git add -A
+> git commit -m "Initial commit"
+> git push -u origin main
+    \end{minted}
+  \end{codebox}
+
+  \subsubsection{Git-flow initialisieren}
+  Das Projekt wird nach der Git-flow Methode versioniert. Das bedeutet, dass der main Branch für die Releases
+  verwendet wird und der develop Branch für die Entwicklung. \newline
+  Dann hat man auch feature, bugfix und hotfix Branches, welche alle selbsterklärend sind. \newline
+  Für jedes AP wird ein feature Branch erstellt, welcher dann in den develop Branch gemerged wird. \newline
+  Als erstes müssen wir den develop branch mit \bgmintinline{bash}{git checkout -b develop} erstellen und diesen
+  mit \bgmintinline{bash}{git push -u origin develop} auf remote pushen. \newline
 \end{minipage}
 
 \begin{minipage}{\textwidth}
