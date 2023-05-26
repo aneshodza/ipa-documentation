@@ -265,4 +265,34 @@ blocks:
   \end{center}
 \end{minipage}
 
-\section{Umsetzung der Datenstruktur}
+\begin{minipage}{\textwidth}
+  \section{Umsetzung der Datenstruktur}
+  Da unter Kapitel \ref{sec:decide_erd} die Entscheidung getroffen wurde die \enquote{has many trough} Beziehung zu
+  verwenden, wird diese auch implementiert. Das bedeutet, dass wir zwei Objekte erstellen müssen: 
+  \bgmintinline{ruby}{PullRequest} und \bgmintinline{ruby}{Deployment}. Diese muss man mit dem Redmine CLI generieren,
+  damit die neuen Objekte richtig mit den anderen Objekten von Redmine interagieren können. Für das Generieren unserer
+  Objekte muss man folgende Befehle ausführen:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+rails generate redmine_plugin_model gnosis PullRequest 
+rails generate redmine_plugin_model gnosis Deployment
+rake redmine:plugins:migrate
+    \end{minted}
+  \end{codebox}
+  \textbf{Wichtig:} Die Migrationen wurden noch mit den Attributen aus dem ERD befüllt. \newline
+  Um dann die Associations nach Rails Standard zu machen, müssen wir unsere neuen Objekte wie folgt anpassen:
+  \begin{codebox}[]
+    \begin{minted}{ruby}
+class PullRequest < ActiveRecord::Base
+  belongs_to :issue
+  has_many :deployments, dependent: :destroy
+end
+
+class Deployment < ActiveRecord::Base
+  belongs_to :pull_request
+  has_one :issue, through: :pull_request
+end
+    \end{minted}
+  \end{codebox}
+\end{minipage}
+
