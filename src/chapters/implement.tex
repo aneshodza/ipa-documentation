@@ -106,7 +106,8 @@ white='\033[1;37m'
 red='\033[0;31m'
 green='\033[0;32m'
 
-rake redmine:plugins:test
+rake redmine:plugins:test:functionals
+# TODO: Add other types of tests when they are implemented
 
 if [[ $? -eq 0 ]]; then
   echo -e "${green}----------------------------------------"
@@ -263,6 +264,43 @@ blocks:
     \label{fig:semaphore_ci_passed}
     \newline
   \end{center}
+\end{minipage}
+\begin{minipage}{\textwidth}
+  \subsection{SimpleCov}
+  Um die Test-Coverage zu messen, wird SimpleCov verwendet. SimpleCov ist ein Ruby Gem, welches die Test-Coverage misst und
+  dann in einem HTML Report ausgibt. Ausserdem kann man eine minimale Test-Coverage definieren, welche beim Unterschreiten
+  die Tests fehlschlagen lässt. \newline
+  Die Implementation findet im test\_helper.rb statt und sieht wie folgt aus:
+  \begin{codebox}[]
+    \begin{minted}{ruby}
+# frozen_string_literal: true
+
+require 'simplecov'
+
+SimpleCov.coverage_dir('plugins/gnosis/coverage')
+SimpleCov.start do
+  add_filter do |source_file|
+    source_file.lines.count < 5
+  end
+
+  add_filter do |source_file|
+    source_file.filename.exclude?('gnosis')
+  end
+end
+
+SimpleCov.minimum_coverage 100
+
+# Load the Redmine helper
+require File.expand_path("#{File.dirname(__FILE__)}/../../../test/test_helper")
+    \end{minted}
+  \end{codebox}
+
+  Wenn wir dann unser Plugin testen, gibt SimpleCov folgenden Report aus:
+  \begin{codebox}
+    \begin{minted}{bash}
+Coverage report generated for Minitest to /Users/anes/c/redmine/plugins/gnosis/coverage. 3 / 3 LOC (100.0%) covered.
+    \end{minted}
+  \end{codebox}
 \end{minipage}
 
 \begin{minipage}{\textwidth}
