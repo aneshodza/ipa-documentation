@@ -337,8 +337,8 @@ class Deployment < ApplicationRecord
   has_one :issue, through: :pull_request
 end
 
-# app/models/application_record.rb
-class ApplicationRecord < ActiveRecord::Base
+# app/models/gnosis_application_record.rb
+class GnosisApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 end
     \end{minted}
