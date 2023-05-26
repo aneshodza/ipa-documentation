@@ -281,7 +281,7 @@ require 'simplecov'
 SimpleCov.coverage_dir('plugins/gnosis/coverage')
 SimpleCov.start do
   add_filter do |source_file|
-    source_file.lines.count < 5
+    source_file.lines.count < 7
   end
 
   add_filter do |source_file|
@@ -295,6 +295,9 @@ SimpleCov.minimum_coverage 100
 require File.expand_path("#{File.dirname(__FILE__)}/../../../test/test_helper")
     \end{minted}
   \end{codebox}
+  \textbf{Zu beachten:} Auf Zeile acht wird die mindeste Zeilenanzahl der Dateien auf 7 anstatt 5 gesetzt. Das hat den
+  Grund, dass Rails Klassen meistens mit einem \bgmintinline{ruby}{# frozen_string_literal: true} gefolgt von einer
+  leeren Zeile beginnen. Das führt dazu, dass Klassen mit vier Zeilen zu Dateien mit sechs Zeilen führen. \newline
 
   Wenn wir dann unser Plugin testen, gibt SimpleCov folgenden Report aus:
   \begin{codebox}
@@ -322,14 +325,21 @@ rake redmine:plugins:migrate
   Um dann die Associations nach Rails Standard zu machen, müssen wir unsere neuen Objekte wie folgt anpassen:
   \begin{codebox}[]
     \begin{minted}{ruby}
-class PullRequest < ActiveRecord::Base
+# app/models/pull_request.rb
+class PullRequest < ApplicationRecord
   belongs_to :issue
   has_many :deployments, dependent: :destroy
 end
 
-class Deployment < ActiveRecord::Base
+# app/models/deployment.rb
+class Deployment < ApplicationRecord
   belongs_to :pull_request
   has_one :issue, through: :pull_request
+end
+
+# app/models/application_record.rb
+class ApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
 end
     \end{minted}
   \end{codebox}
