@@ -6,25 +6,23 @@ In diesem Kapitel geht es um die Implementation der Software. Diese wird nach de
 \subsection{Versionierung}
 Für die Versionierung wird Git verwendet. Dabei wird GitHub als Remote-Repository verwendet. Das Repository mit
 dem Source-Code kann unter \url{https://github.com/aneshodza/gnosis} gefunden werden.
-
 \subsection{IDE}
 Als IDE wird vim mit verschiedenen Plugins verwendet. Bestimmte Sachen wurden in der \bgmintinline{bash}{.vimrc} Datei
 konfiguriert, damit die Arbeit möglichst effizient ist. \newline
 Diese Konfigurationen sind unter \newline
 \url{https://github.com/aneshodza/.dotfiles/blob/ad87ee9ecc5588a59d66e211797792099569ca95/.vimrc} zu finden.
-
 \subsection{CI/CD}
 Für die CI/CD Pipeline wird SemaphoreCI verwendet. Das ist passend, da auch die PA sehr eng mit SemaphoreCI verbunden
 ist.
 
 \begin{minipage}{\textwidth}
   \section{Aufsetzen des Projektes}
-  Zu Beginn wird Arbeitspaket 7, Aufestzen des Projektes, implementiert. Dazu sind folgende Schritte zu befolgen:
+  Zu Beginn wird Arbeitspaket 7, Aufsetzen des Projektes, implementiert. Dazu sind folgende Schritte zu befolgen:
   \begin{enumerate}
     \item Erstellen des Plugins
     \item Erstellen des Remote-Repository
     \item Mit dem README beginnen
-    \item Aufsetzen der CI/CD Pipeline \newline
+    \item Aufsetzen der CI/CD Pipeline
   \end{enumerate}
 \end{minipage}
 
@@ -84,7 +82,7 @@ create  plugins/gnosis/test/test_helper.rb
   Beim Erstellen des Plugins wurde automatisch ein \enquote{README.rdoc} erstellt. Dieses wird bei Ruby Projekten
   oft anstatt eines \enquote{README.md} verwendet. Da diese PA nach Vorgaben von Redmine arbeitet, wird auch das
   README im rdoc Format geschrieben. \newline
-  Da noch nicht viel im Projekt steht, wird nur beschrieben was genau das Plugin kann und wie es funktioniert. \newline
+  Da noch nicht viel im Projekt steht, wird nur beschrieben was genau das Plugin kann und wie es funktioniert.
 \end{minipage}
 
 \subsection{Aufsetzen der CI/CD Pipeline}
@@ -106,8 +104,7 @@ white='\033[1;37m'
 red='\033[0;31m'
 green='\033[0;32m'
 
-rake redmine:plugins:test:functionals
-# TODO: Add other types of tests when they are implemented
+rake redmine:plugins:test
 
 if [[ $? -eq 0 ]]; then
   echo -e "${green}----------------------------------------"
@@ -267,10 +264,11 @@ blocks:
 \end{minipage}
 
 \begin{minipage}{\textwidth}
-  \subsection{SimpleCov}
+  \subsubsection{SimpleCov}
   Um die Test-Coverage zu messen, wird SimpleCov verwendet. SimpleCov ist ein Ruby Gem, welches die Test-Coverage misst und
   dann in einem HTML Report ausgibt. Ausserdem kann man eine minimale Test-Coverage definieren, welche beim Unterschreiten
-  die Tests fehlschlagen lässt. \newline
+  die Tests fehlschlagen lässt. Damit das funktioniert müssen wir SimpleCov einbinden und dann die Dateien, welche wir
+  auf ihre Test-Coverage prüfen wollen laden\newline
   Die Implementation findet im test\_helper.rb statt und sieht wie folgt aus:
   \begin{codebox}[]
     \begin{minted}{ruby}
@@ -281,20 +279,25 @@ require 'simplecov'
 SimpleCov.coverage_dir('plugins/gnosis/coverage')
 SimpleCov.start do
   add_filter do |source_file|
-    source_file.lines.count < 5
+    source_file.lines.count < 7
   end
 
   add_filter do |source_file|
-    source_file.filename.exclude?('gnosis')
+    source_file.filename.exclude?('gnosis/app')
   end
 end
 
 SimpleCov.minimum_coverage 100
 
+Dir[Rails.root.join('plugins/gnosis/app/**/*.rb')].each { |f| load f }
+
 # Load the Redmine helper
 require File.expand_path("#{File.dirname(__FILE__)}/../../../test/test_helper")
     \end{minted}
   \end{codebox}
+  \textbf{Zu beachten:} Auf Zeile acht wird die mindeste Zeilenanzahl der Dateien auf 7 anstatt 5 gesetzt. Das hat den
+  Grund, dass Rails Klassen meistens mit einem \bgmintinline{ruby}{# frozen_string_literal: true} gefolgt von einer
+  leeren Zeile beginnen. Das führt dazu, dass Klassen mit vier Zeilen zu Dateien mit sechs Zeilen führen. \newline
 
   Wenn wir dann unser Plugin testen, gibt SimpleCov folgenden Report aus:
   \begin{codebox}
@@ -303,3 +306,57 @@ Coverage report generated for Minitest to /Users/anes/c/redmine/plugins/gnosis/c
     \end{minted}
   \end{codebox}
 \end{minipage}
+
+\begin{minipage}{\textwidth}
+  \subsubsection{FactoryBot \& Faker}
+  Damit die Tests mit Beispieldaten arbeiten können, wird FactoryBot in Kombination mit Faker verwendet. FactoryBot ist ein
+  Rubygem, welcher das Erstellen von Daten vereinfacht. In diesem Fall wird es aber nur für Testdaten genutzt. Um dann die
+  Attribute zu befüllen wird Faker verwendet. Dieser Rubygem generiert zufällige Daten, wie beispielsweise Namen, Adressen
+  oder Telefonnummern. \newline
+  Damit FactoryBot verwendbar ist, muss man test\_helper.rb anpassen:
+  \begin{codebox}[]
+    \begin{minted}{ruby}
+FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
+FactoryBot.find_definitions
+    \end{minted}
+  \end{codebox}
+\end{minipage}
+
+\begin{minipage}{\textwidth}
+  \section{Umsetzung der Datenstruktur}
+  Da unter Kapitel \ref{sec:decide_erd} die Entscheidung getroffen wurde die \enquote{has many trough} Beziehung zu
+  verwenden, wird diese auch implementiert. Das bedeutet, dass wir zwei Objekte erstellen müssen: 
+  \bgmintinline{ruby}{PullRequest} und \bgmintinline{ruby}{Deployment}. Diese muss man mit dem Redmine CLI generieren,
+  damit die neuen Objekte richtig mit den anderen Objekten von Redmine interagieren können. Für das Generieren unserer
+  Objekte muss man folgende Befehle ausführen:
+  \begin{codebox}[]
+    \begin{minted}{bash}
+rails generate redmine_plugin_model gnosis PullRequest 
+rails generate redmine_plugin_model gnosis Deployment
+rake redmine:plugins:migrate
+    \end{minted}
+  \end{codebox}
+  \textbf{Wichtig:} Die Migrationen wurden noch mit den Attributen aus dem ERD befüllt. \newline
+  Um dann die Associations nach Rails Standard zu machen, müssen wir unsere neuen Objekte wie folgt anpassen:
+  \begin{codebox}[]
+    \begin{minted}{ruby}
+# app/models/pull_request.rb
+class PullRequest < ApplicationRecord
+  belongs_to :issue
+  has_many :deployments, dependent: :destroy
+end
+
+# app/models/deployment.rb
+class Deployment < ApplicationRecord
+  belongs_to :pull_request
+  has_one :issue, through: :pull_request
+end
+
+# app/models/gnosis_application_record.rb
+class GnosisApplicationRecord < ActiveRecord::Base
+  self.abstract_class = true
+end
+    \end{minted}
+  \end{codebox}
+\end{minipage}
+
