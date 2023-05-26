@@ -53,80 +53,68 @@ Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil s
 Es gibt hier nicht viel zu entscheiden, da es eine Sache von persönlicher Präferenz ist. Dennoch haben beide Optionen
 Vor- und Nachteile. \newline
 
-\begin{minipage}{\textwidth}
-    \subsubsection{Option 1: Zwei Listen}
-    Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
-    die zweite darunter für Deployments. \newline
-    Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
-    gehört. \newline
-\end{minipage}
+\subsubsection{Option 1: Zwei Listen}
+Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
+die zweite darunter für Deployments. \newline
+Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
+gehört. \newline
 
-\begin{minipage}{\textwidth}
-    \subsubsection{Eine Liste mit Unterlisten}
-    Die zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
-    die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
-    Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
-    Pull Request einfacher zuzuordnen sind. \newline
-\end{minipage}
+\subsubsection{Eine Liste mit Unterlisten}
+Die zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
+die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
+Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
+Pull Request einfacher zuzuordnen sind. \newline
 
 \section{Entscheidungen}
-\begin{minipage}{\textwidth}
-    \subsection{Entity-Relationship-Diagram}
-    \label{sec:decide_erd}
-    \subsubsection{Bewertungsmatrix}
-    \begin{center}
-        \resizebox{0.75\textwidth}{!}{%
-            \begin{tabular}{|c|c|c|c|c|}
-                \hline
-                \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Option 1} & \textbf{Option 2} & \textbf{Option 3} \\ \hline
-                Einfachheit & 30\% & 7.5 & 5 & 7 \\ \hline
-                Realitätsnähe & 35\% & 5 & 7.5 & 10 \\ \hline
-                Erweiterbarkeit & 35\% & 7.5 & 5 & 8 \\ \hline
-                \textbf{Total} & --- & 6.625 & 5.875 & \textbf{8.4} \\ \hline
-            \end{tabular}%
-        }
-    \end{center}
-    \subsubsection{Entscheidung}
-    Die Entscheidung fiel auf die dritte Option (Kapitel \ref{sec:decide_has_many_through}), da diese die Realität am besten
-    abbildet, es einfacher zu erweitern ist und die Implementation ausserdem nicht sehr komplex ist. \newline
-    Langfristig wird die Codebase dadurch profitieren, da die Datenstruktur einfacher zu verstehen ist und die Komplexität
-    tiefer ist. \newline
-\end{minipage}
+\subsection{Entity-Relationship-Diagram}
+\label{sec:decide_erd}
+\subsubsection{Bewertungsmatrix}
+\begin{center}
+    \resizebox{0.75\textwidth}{!}{%
+        \begin{tabular}{|c|c|c|c|c|}
+            \hline
+            \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Option 1} & \textbf{Option 2} & \textbf{Option 3} \\ \hline
+            Einfachheit & 30\% & 7.5 & 5 & 7 \\ \hline
+            Realitätsnähe & 35\% & 5 & 7.5 & 10 \\ \hline
+            Erweiterbarkeit & 35\% & 7.5 & 5 & 8 \\ \hline
+            \textbf{Total} & --- & 6.625 & 5.875 & \textbf{8.4} \\ \hline
+        \end{tabular}%
+    }
+\end{center}
+\subsubsection{Entscheidung}
+Die Entscheidung fiel auf die dritte Option (Kapitel \ref{sec:decide_has_many_through}), da diese die Realität am besten
+abbildet, es einfacher zu erweitern ist und die Implementation ausserdem nicht sehr komplex ist. \newline
+Langfristig wird die Codebase dadurch profitieren, da die Datenstruktur einfacher zu verstehen ist und die Komplexität
+tiefer ist. \newline
 
-\begin{minipage}{\textwidth}
-    \subsection{Activity Diagramme}
-    Zu den Activity Diagrammen gibt es nichts zu entscheiden, ausser wie SemaphoreCI implementiert wird,
-    da wahrscheinlich ein Backup-Plan nötig ist. \newline
-    Momentan fehlen Informationen darüber, ob die Implementation möglich ist, weshalb die GitHub Implementation als erstes
-    stattfinden wird. Danach wird während der Implementation von SemaphoreCI entschieden, ob es möglich ist oder nicht. Falls
-    nicht, wird der Backup-Plan implementiert. \newline
-\end{minipage}
+\subsection{Activity Diagramme}
+Zu den Activity Diagrammen gibt es nichts zu entscheiden, ausser wie SemaphoreCI implementiert wird,
+da wahrscheinlich ein Backup-Plan nötig ist. \newline
+Momentan fehlen Informationen darüber, ob die Implementation möglich ist, weshalb die GitHub Implementation als erstes
+stattfinden wird. Danach wird während der Implementation von SemaphoreCI entschieden, ob es möglich ist oder nicht. Falls
+nicht, wird der Backup-Plan implementiert. \newline
 
-\begin{minipage}{\textwidth}
-    \subsection{Tech-Stack}
-    Die Entscheidung für den Tech-Stack ist bereits gefallen, da Redmine diesen vorgibt. \newline
-    Die Datenbank für die CI, sowie das lokale testen wird PostgreSQL sein, da dass der Standard bei der Renuo AG ist.
-    \newline
-\end{minipage}
+\subsection{Tech-Stack}
+Die Entscheidung für den Tech-Stack ist bereits gefallen, da Redmine diesen vorgibt. \newline
+Die Datenbank für die CI, sowie das lokale testen wird PostgreSQL sein, da dass der Standard bei der Renuo AG ist.
+\newline
 
-\begin{minipage}{\textwidth}
-    \subsection{Mockups}
-    \subsubsection{Bewertungsmatrix}
-    \begin{center}
-        \resizebox{0.75\textwidth}{!}{%
-            \begin{tabular}{|c|c|c|c|}
-                \hline
-                \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Zwei Listen} & \textbf{Unterlisten} \\ \hline
-                Übersichtlichkeit & 40\% & 8 & 7 \\ \hline
-                Zuordnung & 50\% & 6 & 10 \\ \hline
-                Ästhetik & 10\% & 8 & 9 \\ \hline
-                \textbf{Total} & --- & 7 & \textbf{8.7} \\ \hline
-            \end{tabular}%
-        }
-    \end{center}
+\subsection{Mockups}
+\subsubsection{Bewertungsmatrix}
+\begin{center}
+    \resizebox{0.75\textwidth}{!}{%
+        \begin{tabular}{|c|c|c|c|}
+            \hline
+            \textbf{Kriterium} & \textbf{Gewichtung} & \textbf{Zwei Listen} & \textbf{Unterlisten} \\ \hline
+            Übersichtlichkeit & 40\% & 8 & 7 \\ \hline
+            Zuordnung & 50\% & 6 & 10 \\ \hline
+            Ästhetik & 10\% & 8 & 9 \\ \hline
+            \textbf{Total} & --- & 7 & \textbf{8.7} \\ \hline
+        \end{tabular}%
+    }
+\end{center}
 
-    \subsubsection{Entscheidung}
-    Option zwei, aus Grafik \ref{fig:mockup_sublists}, wurde gewählt, da die Deployments besser zu den Pull Requests
-    zugeordnet werden können. Der Nachteil ist, dass es sehr schnell sehr unübersichtlich werden kann, doch in der Realität
-    hat es zu jedem Issue meistens eine Pull Request, weshalb das kein grosses Problem darstellt.
-\end{minipage}
+\subsubsection{Entscheidung}
+Option zwei, aus Grafik \ref{fig:mockup_sublists}, wurde gewählt, da die Deployments besser zu den Pull Requests
+zugeordnet werden können. Der Nachteil ist, dass es sehr schnell sehr unübersichtlich werden kann, doch in der Realität
+hat es zu jedem Issue meistens eine Pull Request, weshalb das kein grosses Problem darstellt.
