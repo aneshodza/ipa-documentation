@@ -359,6 +359,16 @@ end
   \end{minted}
 \end{codebox}
 
+Dann müssen wir die Environment-Keys aufsetzen. Das machen wir, indem wir eine YAML Datei lesen und in eine Konstante
+schreiben. Das tun wir wie folgt in \bgmintinline{bash}{init.rb}:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+yaml_data = YAML.safe_load(ERB.new(Rails.root.join('plugins/gnosis/config/application.yml').read).result)
+ENV = ActiveSupport::HashWithIndifferentAccess.new(yaml_data)
+# Rest des init.rb
+  \end{minted}
+\end{codebox}
+
 \subsection{Pull Request Objekte}
 Als Erstes wird der Event Listener für die Pull Request Objekte erstellt, welcher auf die Webhook Events
 von GitHub wartet. Wenn ein Event empfangen wird, wird der Handler aufgerufen. Dieser Prozess ist auf dem Deployment
