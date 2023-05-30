@@ -390,7 +390,7 @@ ENV = ActiveSupport::HashWithIndifferentAccess.new(yaml_data)
 Als Erstes wird der Event Listener für die Pull Request Objekte erstellt, welcher auf die Webhook Events
 von GitHub wartet. Wenn ein Event empfangen wird, wird der Handler aufgerufen. Dieser Prozess ist auf dem Deployment
 Diagramm unter Kapitel \ref{fig:deployment-diagram} gut ersichtlich. \newline
-Der Listener sowie das Pull Request Objekt sehen wie folgt aus:
+Die Listener zu Handler Dynamik sieht im Code wie folgt aus:
 \begin{codebox}[]
   \begin{minted}{ruby}
 # app/controllers/webhooks_controller.rb
@@ -419,7 +419,14 @@ class WebhooksController < ApplicationController
     end
   end
 end
+  \end{minted}
+\end{codebox}
 
+Um dann die Objekte zu erstellen, muss eine neue Methode erstellt werden, welche die Parameter entgegennimmt und nur
+falls nötig ein neues Objekt erstellt. Ausserdem soll der Status auf \enquote{merged} gesetzt werden, falls die Pull
+Request bereits gemerged wurde. Diese Methode sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
 # app/models/pull_request.rb
 class PullRequest < GnosisApplicationRecord
   belongs_to :issue
@@ -438,13 +445,14 @@ end
 \end{codebox}
 Wenn man diesen Code mit dem Activity Diagramm vergleicht, wird schnell ersichtlich, wie das Activity Diagramm darin
 widergespiegelt wird. Hier ist das gleiche Activity Diagramm wie unter Kapitel \ref{fig:activity_hook_call} nochmals,
-aber mit Zeilen aus dem Code.
+aber mit Zeilen aus dem Code (Die erste Zahl sagt aus welchem Codeblock die Zeile stammt, die Zweite die Zeilennummer
+selbst).
 \begin{center}
   \includegraphics[width=0.8\textwidth]{images/activity/pr_webhook_lines.png}
   \label{fig:activity_diagram_pr_webhook_lines}
 \end{center}
 
-\subsubsection{Sicherheit der Daten}
+\subsubsection{Webhook Sicherheit}
 Unter Kapitel \ref{sec:webhook_prework} wurde die CSRF Protection deaktiviert. Dies ist ein Sicherheitsrisiko, da
 jetzt jeder Dritte Daten an das Backend schicken kann. Um dieses Risiko zu minimieren, verwendet GitHub eine Signatur,
 welche, ohne jemals den Key zu zeigen, die Daten signiert. Diese Signatur funktioniert nach dem gleichen Prinzip wie
@@ -474,7 +482,7 @@ end
   \end{minted}
 \end{codebox}
 
-\subsection{Webhook Aufsetzen}
+\subsubsection{Webhook Aufsetzen}
 Um die Webhook aufzusetzen, begibt man sich auf \url{https://github.com/org/repo/settings/hooks} und klickt auf
 \enquote{Add Webhook}. Die Payload url ist \enquote{Deine URL + /github\_webhook}. Der Secret Key ist ein beliebiger
 String, welcher im Backend als Umgebungsvariable gesetzt werden muss. Schlussendlich muss man noch die Events
@@ -482,5 +490,146 @@ auswählen, welche gesendet werden sollen. In diesem Fall sind dies die \enquote
 \begin{center}
   \includegraphics[width=0.8\textwidth]{images/misc/setup_webhook.png}
   \label{fig:github_webhook}
+\end{center}
+
+\subsection{Deployment Objekte}
+Zunächst wird der Event Listener für die Deployment Objekte erstellt, welcher auf die Webhook Events von Semaphore
+wartet. Auch hier wird das gleiche Prinzip wie bei den Pull Requests angewendet. Der Listener kümmert sich um die
+Abnahme sowie Verifikation der Request und gibt diese dann an den Handler weiter. \newline
+\textbf{Zu beachten:} Plan B wurde verwendet, da die Semaphore Webhooks nicht genug Daten mitschicken. \newline
+Auch hier wird die gleiche Listener und Handler Struktur wie bei den Pull Requests verwendet. So sieht die
+Implementation aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+class WebhooksController < ApplicationController
+  # ...
+  def semaphore_webhook_catcher
+    semaphore_webhook_handler(params)
+
+    render json: {status: :ok}
+  end
+
+  private
+
+  def semaphore_webhook_handler(params)
+    range = params[:revision][:branch][:commit_range]
+    branch = params[:revision][:branch][:name]
+    repo = params[:repository][:slug]
+    passed = params[:pipeline][:result] == 'passed'
+
+    first_sha = range.split('...').first
+    last_sha = range.split('...').last
+
+    sha_between = fetch_commit_history(repo, branch, first_sha, last_sha)
+    create_deploys_for_pull_requests(sha_between, branch, passed)
+  end
+  # ...
+end
+  \end{minted}
+\end{codebox}
+Hier ist viel Code nötig um die Daten zu verarbeiten und die Deployments ihren Pull Requests zuzuordnen. Auf Zeile 19
+wird die Commit-History aus dem GitHub geholt. Diese wurde wie folgt implementiert:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+class WebhooksController < ApplicationController
+  # ...
+  Octokit.configure do |config|
+    config.access_token = ENV.fetch('GITHUB_ACCESS_TOKEN', nil)
+  end
+  CLIENT = Octokit::Client.new
+  # ...
+  private
+  # ...
+  def fetch_commit_history(repo, branch, first_commit, last_commit)
+    commit_sha_list = CLIENT.commits(repo, branch).pluck(:sha)
+
+    first_commit_index = commit_sha_list.index(first_commit)
+    last_commit_index = commit_sha_list.index(last_commit)
+
+    commit_sha_list[last_commit_index..first_commit_index]
+  end
+  # ...
+end
+  \end{minted}
+\end{codebox}
+Dann wird auf Zeile 20 des Ersten Codeblocks die Methode \bgmintinline{ruby}{create\_deploys\_for\_pull\_requests}
+aufgerufen. Diese erstellt alle Deployment Objekte für die Pull Requests, welche in der Commit-History gefunden wurden.
+Dafür wird auch wie bei den Pull Requests eine \enquote{intelligente} create Methode erstellt:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+class WebhooksController < ApplicationController
+  # ...
+  def create_deploys_for_pull_requests(sha_list, branch, passed)
+    sha_list.each do |sha|
+      pull_request = PullRequest.find_by(sha: sha)
+      next unless pull_request
+
+      Deployment.auto_create_or_update(branch, pr.id, url, passed)
+    end
+  end
+
+  def url
+    "https://#{params[:organization][:name]}
+      .semaphoreci.com/workflows/#{params[:workflow][:id]}/"
+  end
+  # ...
+end
+
+# app/models/deployment.rb
+class Deployment < GnosisApplicationRecord
+  # ...
+  def self.auto_create_or_update(branch, pull_request_id, url, has_passed)
+    deploy = Deployment.find_or_initialize_by(deploy_branch: branch, pull_request_id: pull_request_id)
+    deploy.update!(url: url, has_passed: has_passed)
+  end
+end
+  \end{minted}
+\end{codebox}
+Auch hier schlägt die Implementation klare Brücken zu den Activity-Diagrammen. In folgender Grafik ist das
+Activity-Diagramm aus Kapitel \ref{fig:activity_plan_b} mit Code Zeilen notiert. Die erste Zahl ist der Codeblock und
+die Zweite die Zeile.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/activity/plan_b_code.png}
+  \label{fig:activity_plan_b_code}
+\end{center}
+
+\subsubsection{Webhook Sicherheit}
+Die Sicherheit der Semaphore Webhooks läuft sehr ähnlich wie die von GitHub ab: Es wird ein Secret Key verwendet,
+welcher vom Dienst mithilfe von HMAC-SHA256 signiert wird. Dieser wird dann im Header mitgeschickt. Somit erhaltet
+das Backend eine Signatur, welche mit dem Secret Key verifiziert werden kann. \newline
+Die Implementation sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+def semaphore_webhook_catcher
+  unless verify_signature(request.body.read, "sha256=#{request.headers['X-Semaphore-Signature-256']}",
+                          ENV.fetch('SEMAPHORE_WEBHOOK_SECRET', nil))
+    return render json: {status: 403}, status: :forbidden
+  end
+
+  semaphore_webhook_handler(params)
+
+  render json: {status: :ok}
+end
+  \end{minted}
+\end{codebox}
+Es wird die gleiche \bgmintinline{ruby}{verify_signature} Methode wie zuvor verwendet. Nur die Parameter
+unterscheiden sich ganz leicht.
+
+\subsubsection{Aufsetzen der Webhook}
+Hierfür begibt man sich auf \url{https://deine_organisation.semaphoreci.com/notifications} und klickt auf 
+\enquote{New Notification}. Attribute wie \enquote{Name of the notification}, \enquote{Name of the rule} und so weiter
+sind selbst zu entscheiden. Wichtig ist, dass man die Projekte unter \enquote{In Projects} auflistet, unter 
+\enquote{Pipelines} den Regex String \bgmintinline{bash}{/.*-deploy\.yml/} einträgt und zum Schluss unter Webhook
+seine URL + /semaphore\_webhook, sowie WEBHOOK\_SECRET unter \enquote{Secret Name} einträgt. \newline
+Danach muss die Signatur aufgesetzt werden. Dafür geht man unter
+\url{https://deine_organisation.semaphoreci.com/secrets} und klickt auf \enquote{New Secret}. Das wird WEBHOOK\_SECRET
+benannt und der Wert ist der Secret Key.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/misc/setup_semaphore_webhook.png}
+  \label{fig:setup_semaphore_webhook}
 \end{center}
 
