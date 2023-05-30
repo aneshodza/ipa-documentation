@@ -435,7 +435,7 @@ selbst).
   \label{fig:activity_diagram_pr_webhook_lines}
 \end{center}
 
-\subsubsection{Sicherheit der Daten}
+\subsubsection{Webhook Sicherheit}
 Unter Kapitel \ref{sec:webhook_prework} wurde die CSRF Protection deaktiviert. Dies ist ein Sicherheitsrisiko, da
 jetzt jeder Dritte Daten an das Backend schicken kann. Um dieses Risiko zu minimieren, verwendet GitHub eine Signatur,
 welche, ohne jemals den Key zu zeigen, die Daten signiert. Diese Signatur funktioniert nach dem gleichen Prinzip wie
@@ -555,7 +555,8 @@ class WebhooksController < ApplicationController
   end
 
   def url
-    "https://#{params[:organization][:name]}.semaphoreci.com/workflows/#{params[:workflow][:id]}/"
+    "https://#{params[:organization][:name]}
+      .semaphoreci.com/workflows/#{params[:workflow][:id]}/"
   end
   # ...
 end
@@ -577,3 +578,41 @@ die Zweite die Zeile.
   \includegraphics[width=0.8\textwidth]{images/activity/plan_b_code.png}
   \label{fig:activity_plan_b_code}
 \end{center}
+
+\subsubsection{Webhook Sicherheit}
+Die Sicherheit der Semaphore Webhooks läuft sehr ähnlich wie die von GitHub ab: Es wird ein Secret Key verwendet,
+welcher vom Dienst mithilfe von HMAC-SHA256 signiert wird. Dieser wird dann im Header mitgeschickt. Somit erhaltet
+das Backend eine Signatur, welche mit dem Secret Key verifiziert werden kann. \newline
+Die Implementation sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+def semaphore_webhook_catcher
+  unless verify_signature(request.body.read, "sha256=#{request.headers['X-Semaphore-Signature-256']}",
+                          ENV.fetch('SEMAPHORE_WEBHOOK_SECRET', nil))
+    return render json: {status: 403}, status: :forbidden
+  end
+
+  semaphore_webhook_handler(params)
+
+  render json: {status: :ok}
+end
+  \end{minted}
+\end{codebox}
+Es wird die gleiche \bgmintinline{ruby}{verify_signature} Methode wie zuvor verwendet. Nur die Parameter
+unterscheiden sich ganz leicht.
+
+\subsubsection{Aufsetzen der Webhook}
+Hierfür begibt man sich auf \url{https://deine_organisation.semaphoreci.com/notifications} und klickt auf 
+\enquote{New Notification}. Attribute wie \enquote{Name of the notification}, \enquote{Name of the rule} und so weiter
+sind selbst zu entscheiden. Wichtig ist, dass man die Projekte unter \enquote{In Projects} auflistet, unter 
+\enquote{Pipelines} den Regex String \bgmintinline{bash}{/.*-deploy\.yml/} einträgt und zum Schluss unter Webhook
+seine URL + /semaphore\_webhook, sowie WEBHOOK\_SECRET unter \enquote{Secret Name} einträgt. \newline
+Danach muss die Signatur aufgesetzt werden. Dafür geht man unter
+\url{https://deine_organisation.semaphoreci.com/secrets} und klickt auf \enquote{New Secret}. Das wird WEBHOOK\_SECRET
+benannt und der Wert ist der Secret Key.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/misc/setup_semaphore_webhook.png}
+  \label{fig:setup_semaphore_webhook}
+\end{center}
+
