@@ -297,6 +297,22 @@ FactoryBot.find_definitions
   \end{minted}
 \end{codebox}
 
+\subsection{init.rb}
+Im init.rb eines Plugins werden allgemeine Daten wie Name, Autor, Version und so weiter definiert. Dieses File sieht
+in diesem Fall folgendermassen aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+Redmine::Plugin.register :gnosis do
+  name 'Gnosis plugin'
+  author 'Anes Hodza'
+  description 'This Plugin allows you to see the status of issues in a project'
+  version '0.0.1'
+  url 'https://github.com/aneshodza/gnosis/'
+  author_url 'https://www.aneshodza.ch/'
+end
+  \end{minted}
+\end{codebox}
+
 \section{Umsetzung der Datenstruktur}
 Da unter Kapitel \ref{sec:decide_erd} die Entscheidung getroffen wurde die \enquote{has many trough} Beziehung zu
 verwenden, wird diese auch implementiert. Das bedeutet, dass wir zwei Objekte erstellen müssen: 
@@ -363,7 +379,8 @@ Dann müssen wir die Environment-Keys aufsetzen. Das machen wir, indem wir eine 
 schreiben. Das tun wir wie folgt in \bgmintinline{bash}{init.rb}:
 \begin{codebox}[]
   \begin{minted}{ruby}
-yaml_data = YAML.safe_load(ERB.new(Rails.root.join('plugins/gnosis/config/application.yml').read).result)
+yaml_data = YAML.safe_load(ERB.new(
+  Rails.root.join('plugins/gnosis/config/application.yml').read).result)
 ENV = ActiveSupport::HashWithIndifferentAccess.new(yaml_data)
 # Rest des init.rb
   \end{minted}
