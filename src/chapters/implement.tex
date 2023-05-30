@@ -439,9 +439,17 @@ end
 private
 
 def verify_signature(payload_body, recieved_signature)
-  signature = "sha256=#{OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), 'test', payload_body)}"
+  signature = "sha256=#{OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), ENV.fetch('GITHUB_WEBHOOK_SECRET', 'test'),
+                                                payload_body)}"
+
   Rack::Utils.secure_compare(signature, recieved_signature)
 end
   \end{minted}
 \end{codebox}
+
+\subsection{Webhook Aufsetzen}
+Um die Webhook aufzusetzen begibt man sich auf \url{https://github.com/org/repo/settings/hooks} und klickt auf
+\enquote{Add Webhook}. Die Payload url ist \enquote{Deine URL + /github_webhook}. Der Secret Key ist ein beliebiger
+String, welcher im Backend als Umgebungsvariable gesetzt werden muss. Schlussendlich muss man noch die Events
+auswählen, welche gesendet werden sollen. In diesem Fall sind dies die \enquote{Pull requests}.
 
