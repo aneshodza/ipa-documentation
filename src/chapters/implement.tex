@@ -339,6 +339,7 @@ die Webhook Events wartet, sowie einen Handler, welcher die Daten verarbeitet un
 Dieses Konzept braucht es für GitHub sowie SemaphoreCI.
 
 \subsection{Vorarbeiten}
+\label{sec:webhook_prework}
 Als Erstes muss ein Controller erstellt werden, in welchem sich beide Listener befinden. Dieser Controller wird wie
 folgt erstellt:
 \begin{codebox}[]
@@ -415,3 +416,32 @@ aber mit Zeilen aus dem Code.
   \includegraphics[width=0.8\textwidth]{images/activity/pr_webhook_lines.png}
   \label{fig:activity_diagram_pr_webhook_lines}
 \end{center}
+
+\subsubsection{Sicherheit der Daten}
+Unter Kapitel \ref{sec:webhook_prework} wurde die CSRF Protection deaktiviert. Dies ist ein Sicherheitsrisiko, da
+jetzt jeder Dritte Daten an das Backend schicken kann. Um dieses Risiko zu minimieren, verwendet GitHub eine Signatur,
+welche, ohne jemals den Key zu zeigen, die Daten signiert. Diese Signatur funktioniert nach dem gleichen Prinzip wie
+Hashes: Die Daten werden Einweg-Verschlüsselt mit einem geheimen Key. Dann kann im Backend der gleiche Prozess 
+durchgeführt werden und die beiden Hashes verglichen werden. Wenn diese übereinstimmen, sind die Daten echt. Dieses
+Prinzip wird auch bei Passwörtern genutzt. \cite{password_storage} \newline
+Die Implementation sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+def github_webhook_catcher
+  p_body = request.body.read
+  unless verify_signature(p_body, request.env['HTTP_X_HUB_SIGNATURE_256'])
+    return render json: {status: 403}, status: :forbidden
+  end
+  # ...
+end
+
+private
+
+def verify_signature(payload_body, recieved_signature)
+  signature = "sha256=#{OpenSSL::HMAC.hexdigest(OpenSSL::Digest.new('sha256'), 'test', payload_body)}"
+  Rack::Utils.secure_compare(signature, recieved_signature)
+end
+  \end{minted}
+\end{codebox}
+
