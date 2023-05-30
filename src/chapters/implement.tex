@@ -333,3 +333,85 @@ end
   \end{minted}
 \end{codebox}
 
+\section{Daten erstellen und manipulieren}
+Damit wir dem Nutzer Daten anzeigen können, müssen wir diese erstellen. Dafür braucht es: einen Listener, welcher auf
+die Webhook Events wartet, sowie einen Handler, welcher die Daten verarbeitet und Objekte erstellt. \newline
+Dieses Konzept braucht es für GitHub sowie SemaphoreCI.
+
+\subsection{Vorarbeiten}
+Als Erstes muss ein Controller erstellt werden, in welchem sich beide Listener befinden. Dieser Controller wird wie
+folgt erstellt:
+\begin{codebox}[]
+  \begin{minted}{bash}
+bundle exec rails generate redmine_plugin_controller gnosis webhooks
+  \end{minted}
+\end{codebox}
+
+Dies generiert einen Controller mit dem Namen \bgmintinline{ruby}{WebhooksController}. Da die Webhook Listener als
+API Funktionen agieren, müssen wir noch die von Rails eingebaute CSRF Protection deaktivieren. Damit sieht der
+Controller so aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+class WebhooksController < ApplicationController
+  protect_from_forgery except: %i[github_webhook_catcher semaphore_webhook_catcher]
+end
+  \end{minted}
+\end{codebox}
+
+\subsection{Pull Request Objekte}
+Als Erstes wird der Event Listener für die Pull Request Objekte erstellt, welcher auf die Webhook Events
+von GitHub wartet. Wenn ein Event empfangen wird, wird der Handler aufgerufen. Dieser Prozess ist auf dem Deployment
+Diagramm unter Kapitel \ref{fig:deployment-diagram} gut ersichtlich. \newline
+Der Listener sowie das Pull Request Objekt sehen wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# app/controllers/webhooks_controller.rb
+class WebhooksController < ApplicationController
+  protect_from_forgery except: %i[github_webhook_catcher semaphore_webhook_catcher]
+
+  def github_webhook_catcher
+    github_webhook_handler(params)
+
+    render json: {status: :ok}
+  end
+
+  def semaphore_webhook_catcher
+    semaphore_webhook_handler(params)
+
+    render json: {status: :ok}
+  end
+
+  private
+
+  def github_webhook_handler(params)
+    numbers = params[:pull_request][:head][:ref].match(%r{/(\d+)})
+
+    if numbers.length.positive? && Issue.exists?(id: numbers[1])
+      PullRequest.auto_create_or_update(params.merge(issue_id: numbers[1]))
+    end
+  end
+end
+
+# app/models/pull_request.rb
+class PullRequest < GnosisApplicationRecord
+  belongs_to :issue
+  has_many :deployments, dependent: :destroy
+
+  def self.auto_create_or_update(params)
+    state = params[:pull_request][:merged] ? 'merged' : params[:pull_request][:state]
+    pr = PullRequest.find_or_initialize_by(source_branch: params[:pull_request][:head][:ref])
+    pr.update!(state: state, url: params[:pull_request][:html_url],
+               title: params[:pull_request][:title], source_branch: params[:pull_request][:head][:ref],
+               target_branch: params[:pull_request][:base][:ref], was_merged: params[:pull_request][:merged],
+               merge_commit_sha: params[:pull_request][:merge_commit_sha], issue_id: params[:issue_id])
+  end
+end
+  \end{minted}
+\end{codebox}
+Wenn man diesen Code mit dem Activity Diagramm vergleicht, wird schnell ersichtlich, wie das Activity Diagramm darin
+widergespiegelt wird. Hier ist das gleiche Activity Diagramm wie unter Kapitel \ref{fig:activity_hook_call} nochmals,
+aber mit Zeilen aus dem Code.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/activity/pr_webhook_lines.png}
+  \label{fig:activity_diagram_pr_webhook_lines}
+\end{center}
