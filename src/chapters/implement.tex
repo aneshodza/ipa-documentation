@@ -654,3 +654,150 @@ Und in anderen Edge-Cases? Falls diese PA ein Produkt liefern will, welches in d
 liefert das aktive Polling eine zusätzliche Schicht Sicherheit.
 
 \section{Erstellen der Views}
+Um die Implementation zu vervollständigen, müssen noch die Views erstellt werden. Für diese besteht bereits ein
+Mockup, welches in Abbildung \ref{fig:mockup_sublists} dargestellt wird.
+\subsection{Aufsetzen der Hook}
+Da die View dieser PA nicht auf einer eigenen Seite, sondern unter Issue Details angezeigt wird, kann man nicht
+einfach einen Controller erstellen, welcher die View zurückschickt. Es wird ein von Redmine eingebautes Feature
+verwendet: Hooks \cite{redmine_hooks}. \newline
+Dafür geht man als erstes in den \bgmintinline{bash}{/lib/} Ordner und erstellt die Hook Datei. In diesem Fall wurde
+diese \bgmintinline{bash}{issue_details_hook_listener.rb} benannt. In diese wird die (von Redmine gegebene)
+\bgmintinline{ruby}{def view_issues_show_description_bottom} Methode implementiert. Das sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+class NewSectionHookListener < Redmine::Hook::ViewListener
+  def view_issues_show_description_bottom(context={})
+  end
+end
+  \end{minted}
+\end{codebox}
+Der Parameter \bgmintinline{ruby}{context={}} enthält wichtige Informationen zum Kontext in welchem die View 
+angefragt wurde. In diesem Fall sind das beispielsweise: die Issue-ID, das Projekt und so weiter. \newline
+\subsection{Laden der Daten}
+Als Nächstes müssen die Daten aus der Datenbank geladen werden. Für diesen Call müssen alle Pull Requests, welche
+zu diesem Issue gehören, sowie dessen Deployments geladen werden. \newline
+Die Pull Requests können mit \bgmintinline{ruby}{@prs = PullRequest.where(issue_id: @context[:issue].id).to_a}
+geladen werden. Dessen Deployments dann mit
+\bgmintinline{ruby}{@deployments = @prs.map { |pr| Deployment.where(pull_request_id: pr['id']).to_a } }. \newline
+\subsection{Rendern der View}
+Die View selbst ist der Return Value der \bgmintinline{ruby}{def view_issues_show_description_bottom} Methode. Diese
+muss in Form eines Strings zurückgegeben werden, welcher dann als HTML interpretiert wird. \newline
+Das bedeutet, dass das HTML für die View im Backend in Ruby Code geschrieben werden muss. Als Erstes braucht es das
+Grundgerüst der View. Dieses sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# lib/new_section_hook_listener.rb
+class NewSectionHookListener < Redmine::Hook::ViewListener
+  def view_issues_show_description_bottom(context={})
+    @context = context
+    setup
+    <<-HTML
+      <hr/>
+      <p><strong>Pull Requests</strong></p>
+      #{@pr_string.length.positive? ? "<ul>#{@pr_string}</ul>" :
+        'There are currently no PRs open for this issue'}
+    HTML
+  end
+end
+  \end{minted}
+\end{codebox}
+Diese Funktion kümmert sich um das Rendern des HTMLs, sowie das anzeigen der richtigen Nachricht, falls keine Daten
+da sind. Damit aber \bgmintinline{ruby}{@pr_string} Daten enthält, gibt es die \bgmintinline{ruby}{setup} Methode.
+Diese Sammelt alle Daten und speichert diese in Instanz Methoden, damit nicht alles per Parameter übergeben werden
+muss. Diese sieht wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# lib/new_section_hook_listener.rb
+class NewSectionHookListener < Redmine::Hook::ViewListener
+  #...
+  private
+
+  def setup
+    get_prs
+    get_deployments
+    set_deployment_strings
+    set_pr_string
+  end
+end
+  \end{minted}
+\end{codebox}
+Die \bgmintinline{ruby}{def get_prs} sowie \bgmintinline{ruby}{def get_deployments} kümmern sich beide um das Laden
+von Pull Requests und dessen Deployments, wie oben erklärt. Diese wurden wie folgt implementiert:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# lib/new_section_hook_listener.rb
+class NewSectionHookListener < Redmine::Hook::ViewListener
+  #...
+  private
+  #...
+  def get_prs
+    @prs = PullRequest.where(issue_id: @context[:issue].id).to_a
+  end
+
+  def get_deployments
+    @deployments = @prs.map do |pr|
+      Deployment.where(pull_request_id: pr['id']).to_a
+    end
+  end
+end
+  \end{minted}
+\end{codebox}
+Zum Schluss müssen noch die Daten schön formatiert werden. Darum kümmern sich die \newline
+\bgmintinline{ruby}{def set_deployment_strings} und \bgmintinline{ruby}{def set_pr_string} Methoden. Diese wurden
+wie folgt implementiert:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# lib/new_section_hook_listener.rb
+class NewSectionHookListener < Redmine::Hook::ViewListener
+  #...
+  private
+  #...
+  def set_deployment_strings
+    @deployments_strings = []
+    @deployments.each do |deployment_list|
+      formatted_deployment_list = []
+      deployment_list.each do |deployment|
+        formatted_deployment_list << <<-LISTOBJECT
+          <li>
+            <a href='#{deployment['url']}' target='_blank'
+              id='deployment-#{deployment['id']}'>#{deployment['deploy_branch']}</a>
+          </li>
+        LISTOBJECT
+      end
+      @deployments_strings << formatted_deployment_list
+    end
+  end
+
+  def set_pr_string
+    @pr_string = @prs.each_with_index.map do |pr, index|
+      formatted_deployments_list = @deployments_strings[index].join
+      <<-LISTOBJECT
+      <li>
+        <a href='#{pr['url']}' target='_blank'
+          id='pr-#{pr['id']}'>#{pr['title']} (#{pr['state']})</a>
+        <ul>
+          #{formatted_deployments_list}
+        </ul>  
+      </li>
+      LISTOBJECT
+    end.join
+  end
+end
+  \end{minted}
+\end{codebox}
+\subsection{Registrieren der Hook}
+Damit die View angezeigt wird, muss die Hook noch in der \bgmintinline{bash}{init.rb} Datei registriert werden. Das
+kann man einfach mit einem \bgmintinline{ruby}{require} machen. Das init.rb sieht dann wie folgt aus:
+\begin{codebox}[]
+  \begin{minted}{ruby}
+# init.rb
+require 'redmine'
+require_relative 'lib/issue_details_hook_listener'
+  \end{minted}
+\end{codebox}
+\subsection{Resultat}
+Diese Komponenten zusammen ergeben dann folgende View:
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/misc/issue_details.png}
+  \label{fig:issue_details}
+\end{center}
