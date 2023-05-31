@@ -633,6 +633,22 @@ benannt und der Wert ist der Secret Key.
   \label{fig:setup_semaphore_webhook}
 \end{center}
 
-\subsection{Wie aktiv Gepollt wird}
+\subsection{Wieso aktiv Gepollt wird}
 \label{sec:why_active_polling}
-
+Obwohl Software-Design Anforderung 5 besagt, dass aktives Polling der Dienste nicht vorkommen sollte, ist
+es bei guter Begründung erlaubt. In diesem Fall wurde aktiv GitHub abgefragt, weil die Informationen von
+den SemaphoreCI Webhooks nicht ausreichen. Diese geben nämlich eine \enquote{Commit-Range} an, anstatt
+eine Liste aller Commits, welche soeben released wurden. \newline
+Falls das Plugin alle GitHub Pull Requests richtig abfangen würde, dürfte das eigentlich kein Problem sein,
+doch das würde zu einem \enquote{Single Point of failure} führen. Falls nur schon eine Pull Request verpasst
+wird, kann es sein, dass diese direkt am Rand der \enquote{Commit-Range} liegt und somit die Range nicht
+eingegrenzt werden kann. Das sieht ungefähr so aus:
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/misc/missed_commit_range.png}
+  \label{fig:commit_range}
+\end{center}
+Falls aber der erste Commit in der Range fehlt, ist das eher weniger ein Problem, da man nachschauen
+kann, welcher der erste Commit ist und dann die Range manuell eingrenzen kann. \newline
+Falls aber der letzte fehlt, hat man keine Ahnung mehr. Und was passiert, falls die History Rebased wird?
+Und in anderen Edge-Cases? Falls diese PA ein benutzbares Plugin im Ziel hat, kann man das aktive Polling
+nicht vermeiden, da die SemaphoreCI Webhooks nicht genug Informationen liefern.
