@@ -53,6 +53,16 @@ Die Unittests wurden für das Testen der \bgmintinline{ruby}{class Deployment} u
 prüfen, ob die Objekte richtig manipuliert werden. \newline
 Die Systemtests werden für das Testen der UI genutzt. Mithilfe von Capybara wird ein Headless Browser
 gestartet, welcher sich durch die UI klickt und so die Funktionalität testet.
+\subsection{Style Tests}
+Damit der Code \enquote{Clean Code} bleibt, werden Linter verwendet. Diese überprüfen den Code auf Stilfehler,
+Sicherheitslücken und andere Fehler. \newline
+Da dieses Projekt nur aus Ruby Code besteht, wurde Rubocop in Zusammenarbeit mit Brakeman verwendet. Rubocop
+ist dafür zuständig Bugs und Stilfehler zu finden, während Brakeman Sicherheitslücken findet. Diese beiden
+Prozesse wurden auch in der CI Pipeline eingebaut, damit der Code immer sauber bleibt:
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{images/misc/stylecheck_ci.png}
+    \label{fig:ci_pipeline}
+\end{center}
 
 \section{Versionierung}
 \subsection{Dokumentation}
