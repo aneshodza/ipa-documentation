@@ -585,8 +585,7 @@ class Deployment < GnosisApplicationRecord
   # ...
   def self.auto_create_or_update(branch, pull_request_id, url, has_passed, ci_date_string)
     ci_date = Time.zone.parse(ci_date_string)
-    deploy = Deployment.find_or_initialize_by(deploy_branch: branch, pull_request_id: pull_request_id,
-                                                                     ci_date: ci_date_string)
+    deploy = Deployment.find_or_initialize_by(deploy_branch: branch, pull_request_id: pull_request_id, ci_date: ci_date_string)
     deploy.update!(url: url, has_passed: has_passed)
   end
 end
