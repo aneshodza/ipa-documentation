@@ -138,6 +138,7 @@ Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im 
 Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automated-tests} dokumentiert.
 
 \subsection{Manuelle Tests}
+\label{sec:manual-testing}
 Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
 werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolliert.
 
@@ -160,9 +161,9 @@ Die zweite Option ist, ein Repository auf GitHub zu erstellen und dieses mit Sem
 verbinden. \newline
 Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel
 erstellen, welcher eine öffentliche IP zur Verfügung stellt. \newline
-Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird. \newline
+Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird.
 
-\subsubsection{Verarbeiten von SemaphoreCI Daten}
+\subsubsection{1. Verarbeiten von SemaphoreCI Daten}
 Da unter Kapitel \ref{sec:general-testing} etabliert wurde, dass die Dienste wirklich verwendet werden beim manuellen Testen,
 wird der Test nach folgenden Schritten durchgeführt:
 \begin{enumerate}
@@ -178,7 +179,7 @@ wird der Test nach folgenden Schritten durchgeführt:
 \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment angezeigt wird. Das kann entweder grün oder rot
 sein, je nachdem ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
 
-\subsubsection{Verarbeiten von GitHub Daten}
+\subsubsection{2. Verarbeiten von GitHub Daten}
 \label{sec:github-testing}
 Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
 \begin{enumerate}
@@ -193,13 +194,13 @@ Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
 \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues eine Pull Request angezeigt wird. Da diese noch nicht gemerged
 wurde, sollte es sichtbar sein, dass die Pull Request offen ist.
 
-\subsubsection{Der Nutzer schaut sich ein Issue an mit Daten}
+\subsubsection{3. Der Nutzer schaut sich ein Issue an mit Daten}
 Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. Daraufhin werden die Schritte aus
 \ref{sec:github-testing} durchgeführt, damit das Issue mit Daten vom Plugin befüllt wird. \newline
 \textbf{Das zu erwartende Resultat ist,} dass die offene Pull Request angezeigt wird. Das sollte ohne grosse Ladezeit passieren, wie von 
 Software-Design Anforderung drei verlangt.
 
-\subsubsection{Der Nutzer schaut sich ein Issue an ohne Daten}
+\subsubsection{4. Der Nutzer schaut sich ein Issue an ohne Daten}
 Für diesen Testfall wird einfach auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
 kontrolliert, was angezeigt wird. \newline
 \textbf{Das zu erwartende Resultat ist,} dass keine Daten angezeigt werden.
