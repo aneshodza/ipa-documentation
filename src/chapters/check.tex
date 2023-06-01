@@ -3,10 +3,20 @@
 \section{Testprotokoll}
 Dieser Abschnitt protokolliert das Testkonzept (siehe Kapitel \ref{sec:testkonzept}).
 \subsection{Manuelle Tests}
-\label{sec:automated-tests}
+\label{sec:manual-tests}
+Die manuellen Tests wurden unter \ref{sec:manual-testing} vorgegeben. Hier werden die Ergebnisse
+dokumentiert.
+\begin{tabularx}{\textwidth}[H]{|c|X|X|}
+    \hline
+    \textbf{Nr.} & \textbf{Resultat} & \textbf{Datum und Uhrzeit} \\ \hline
+    1 & Bestanden & 1. Juni 2023, 16:20 \\ \hline
+    2 & Bestanden & 1. Juni 2023, 16:25 \\ \hline
+    3 & Bestanden & 1. Juni 2023, 16:35 \\ \hline
+    4 & Bestanden & 1. Juni 2023, 16:40 \\ \hline
+\end{tabularx}
 
 \subsection{Automatisierte Tests}
-\label{sec:manual-tests}
+\label{sec:automated-tests}
 Die automatisierten Tests wurden mit MiniTest und Capybara geschrieben, wie von Redmine selbst
 vorgegeben. Auch das laufen lassen der Tests basiert auf dem vom Redmine vorgegebenen Rake Task. Um die
 Tests laufen zu lassen, muss man \bgmintinline{bash}{rake redmine:plugins:test NAME=gnosis} im Terminal
@@ -42,7 +52,7 @@ Die Unittests wurden für das Testen der \bgmintinline{ruby}{class Deployment} u
 \bgmintinline{ruby}{class PullRequest} genutzt. Sie testen die einzelnen Methoden dieser Klassen und
 prüfen, ob die Objekte richtig manipuliert werden. \newline
 Die Systemtests werden für das Testen der UI genutzt. Mithilfe von Capybara wird ein Headless Browser
-gestartet, welcher sich durch die UI klickt und so die Funktionalität testet.  
+gestartet, welcher sich durch die UI klickt und so die Funktionalität testet.
 
 \section{Versionierung}
 \subsection{Dokumentation}
