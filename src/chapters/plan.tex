@@ -4,7 +4,7 @@
 Die Zeitplanung wird in der Abbildung \ref{fig:timeplan} oberhalb gezeigt. Die restlichen Aspekte der Planung sind in diesem Kapitel dokumentiert.
 
 \section{Namensgebung}
-Das Repository sowie Projekt werden \enquote{gnosis} genannt. Dieser Name kommt aus dem Altgriechischen und bedeutet
+Das Repository sowie Projekt werden \enquote{Gnosis} genannt. Dieser Name kommt aus dem Altgriechischen und bedeutet
 \enquote{Wissen}. Der Name wurde gewählt, da das Projekt dem Nutzer Wissen über den Development-Stand des Projektes
 vermitteln soll. 
 
@@ -57,7 +57,7 @@ Das Activity-Diagramm zeigt den Ablauf des Plugins. In diesem Fall gibt es zwei 
 \end{itemize}
 
 \subsubsection{Hook call}
-Die Hook calls werden von SemaphoreCI oder GitHub ausgelöst. Beide bei unterschiedlichen Events, welche beide mit Sanduhren
+Die Hook Calls werden von SemaphoreCI oder GitHub ausgelöst. Beide bei unterschiedlichen Events, welche beide mit Sanduhren
 dargestellt wurden:
 \begin{center}
   \includegraphics[width=0.8\textwidth]{images/activity/webhook.png}
@@ -66,8 +66,8 @@ dargestellt wurden:
 
 \subsubsection{SemaphoreCI Plan B}
 Da SemaphoreCI in den Webhook Daten nicht alle Commit-Hashes, sondern nur eine Range mitliefert, kann es sein, dass die
-Informationen über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
-SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen wie die Commit-Geschichte aussieht. So
+Informationen, über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
+SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen, wie die Commit-Geschichte aussieht. So
 ungefähr würde das aussehen: \newline
 \begin{center}
   \includegraphics[width=0.8\textwidth]{images/activity/semaphore-backup-hooks.png}
@@ -130,7 +130,7 @@ SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sow
 fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
 
 \subsubsection{Weitere Tools}
-Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
+Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden, sind:
 \begin{itemize}
   \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
   \item \textbf{FactoryBot} für das Initialisieren von Objekten.
@@ -159,7 +159,7 @@ weiter verfolgt wird. \newline
 \textbf{Benützen des Dienstes, damit dieser die Daten schickt} \\
 Die zweite Option ist, ein Repository auf GitHub zu erstellen und dieses mit SemaphoreCI / Github Webhooks zu
 verbinden. \newline
-Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel
+Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP-Tunnel
 erstellen, welcher eine öffentliche IP zur Verfügung stellt. \newline
 Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird.
 
@@ -170,14 +170,14 @@ wird der Test nach folgenden Schritten durchgeführt:
   \item Ein Issue auf Redmine erstellen
   \item Auf GitHub ein Repository erstellen und dieses mit SemaphoreCI verbinden. 
   (\textbf{Wichtig:} Es muss ein Deploy-Skript erstellt werden. Dieses heisst wie folgt:
-  [branchname]-deploy.sh)
+  [branchname]-deploy.yml)
   \item Eine Pull Request erstellen und mergen.
   \item Warten, bis die Pipeline auf SemaphoreCI durchgelaufen ist
   \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
 \end{enumerate}
 
-\textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment angezeigt wird. Das kann entweder grün oder rot
-sein, je nachdem ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
+\textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment sichtbar wird. Das kann entweder grün oder rot
+sein, je nachdem, ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
 
 \subsubsection{2. Verarbeiten von GitHub Daten}
 \label{sec:github-testing}
@@ -188,7 +188,7 @@ Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
   \item Eine GitHub Webhook erstellen, welche bei Pull Requests Daten schickt. (Die URL muss auf den lokalen Server zeigen)
   \item Einen feature Branch erstellen (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
   \item Eine Pull Request erstellen
-  \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
+  \item Auf dem Issue kontrollieren, ob die Daten korrekt aufgelistet werden
 \end{enumerate}
 
 \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues eine Pull Request angezeigt wird. Da diese noch nicht gemerged
@@ -201,7 +201,7 @@ Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. 
 Software-Design Anforderung drei verlangt.
 
 \subsubsection{4. Der Nutzer schaut sich ein Issue an ohne Daten}
-Für diesen Testfall wird einfach auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
+Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
 kontrolliert, was angezeigt wird. \newline
 \textbf{Das zu erwartende Resultat ist,} dass keine Daten angezeigt werden.
 
@@ -211,5 +211,5 @@ Als Testmittel werden folgende Tools verwendet:
   \item \textbf{Redmine} für das Erstellen von Issues
   \item \textbf{GitHub} für das Erstellen von Repositories und Pull Requests
   \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
-  \item \textbf{ngrok} für das Erstellen von HTTP Tunnels
+  \item \textbf{ngrok} für das Erstellen von HTTP-Tunnels
 \end{itemize}
