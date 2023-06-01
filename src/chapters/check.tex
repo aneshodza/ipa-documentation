@@ -65,9 +65,46 @@ Prozesse wurden auch in der CI Pipeline eingebaut, damit der Code immer sauber b
 \end{center}
 
 \section{Versionierung}
+In diesem Kapitel wird die Versionierung von Dokumentation sowie Programmcode beschrieben.
 \subsection{Dokumentation}
+Die Dokumentation wird mit LaTeX geschrieben und deswegen auch mit Git auf GitHub versioniert. Das
+Repository kann unter \url{https://github.com/aneshodza/ipa-documentation} gefunden werden.
+\subsubsection{Git-Flow}
+Die Versionierung wird nach dem \enquote{Git-Flow} Prinzip gemacht. Das heisst: Es gibt einen main sowie
+develop Branch. Der main Branch wird nur bei Releases geändert. Der develop Branch wird für die normale
+Entwicklung genutzt. Für jedes neue Kapitel wird ein Feature Branch erstellt.
+\subsubsection{Releases}
+Am Ende jedes Tages wird ein \enquote{Release} erstellt. Damit ist nicht der main release gemeint, da dieser
+nur am Ende des Projekts erstellt wird. Diese Releases finden per Git Tag statt. Dabei wird der letzte
+Commit eines Tages mit einem Tag markiert. Das sieht wie folgt aus:
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{images/misc/git_tag.png}
+    \label{fig:git_tag}
+\end{center}
+
 \subsection{Programm}
-\subsubsection{Selbstkritische PR Reviews}
+Der Programmcode wird auch mit Git auf GitHub versioniert. Das Repository kann unter
+\url{https://github.com/aneshodza/gnosis} gefunden werden.
+\subsubsection{Git-Flow}
+Die Versionierung dieses Repositorys wird auch nach dem \enquote{Git-Flow} Prinzip gemacht. Dabei wird
+speziell darauf geachtet, dass alle Commit-Messages auf Englisch, imperativ und in der Gegenwartsform
+geschrieben sind: 
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{images/misc/git_commit_message.png}
+    \label{fig:git_commit_message}
+\end{center}
+\subsubsection{Selbstkritische Pull Request Reviews}
+Bei grösseren Pull Requests wurde ein selbstkritisches Review gemacht. Dabei wurde der Code nochmals
+durchgegangen und überprüft, ob grobe Fehler zu finden sind:
+\begin{center}
+    \includegraphics[width=0.75\textwidth]{images/misc/git_pr_review.png}
+    \label{fig:git_pr_review}
+\end{center}
+\subsubsection{Arbeitspakete mit \gls{grün}er CI}
+Die Pull Requests entsprechen meistens geplanten Arbeitspaketen und wurden deswegen auch so benannt. Es hat
+aber auch einige Pull Requests, welche kein AP waren, da Dinge wie Bugfixes oder Refactorings nicht geplant
+werden können. \newline
+Dabei wurde auch darauf geachtet, dass der neuste Commit jeder Pull Request grün ist.
 
 \section{Kopplung vom Hauptprogramm}
 
