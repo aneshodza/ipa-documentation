@@ -434,6 +434,7 @@ class PullRequest < GnosisApplicationRecord
 
   def self.auto_create_or_update(params)
     state = params[:pull_request][:merged] ? 'merged' : params[:pull_request][:state]
+    state = 'draft' if params[:pull_request][:draft]
     pr = PullRequest.find_or_initialize_by(source_branch: params[:pull_request][:head][:ref])
     pr.update!(state: state, url: params[:pull_request][:html_url],
                title: params[:pull_request][:title], source_branch: params[:pull_request][:head][:ref],
@@ -517,12 +518,13 @@ class WebhooksController < ApplicationController
     branch = params[:revision][:branch][:name]
     repo = params[:repository][:slug]
     passed = params[:pipeline][:result] == 'passed'
+    time = params[:pipeline][:done_at]
 
     first_sha = range.split('...').first
     last_sha = range.split('...').last
 
     sha_between = fetch_commit_history(repo, branch, first_sha, last_sha)
-    create_deploys_for_pull_requests(sha_between, branch, passed)
+    create_deploys_for_pull_requests(sha_between, branch, passed, time)
   end
   # ...
 end
@@ -562,12 +564,12 @@ Dafür wird auch wie bei den Pull Requests eine \enquote{intelligente} create Me
 # app/controllers/webhooks_controller.rb
 class WebhooksController < ApplicationController
   # ...
-  def create_deploys_for_pull_requests(sha_list, branch, passed)
+  def create_deploys_for_pull_requests(sha_list, branch, passed, ci_date_string)
     sha_list.each do |sha|
       pull_request = PullRequest.find_by(sha: sha)
       next unless pull_request
 
-      Deployment.auto_create_or_update(branch, pr.id, url, passed)
+      Deployment.auto_create_or_update(branch, pr.id, url, passed, ci_date_string)
     end
   end
 
@@ -581,8 +583,10 @@ end
 # app/models/deployment.rb
 class Deployment < GnosisApplicationRecord
   # ...
-  def self.auto_create_or_update(branch, pull_request_id, url, has_passed)
-    deploy = Deployment.find_or_initialize_by(deploy_branch: branch, pull_request_id: pull_request_id)
+  def self.auto_create_or_update(branch, pull_request_id, url, has_passed, ci_date_string)
+    ci_date = Time.zone.parse(ci_date_string)
+    deploy = Deployment.find_or_initialize_by(deploy_branch: branch, pull_request_id: pull_request_id,
+                                                                     ci_date: ci_date_string)
     deploy.update!(url: url, has_passed: has_passed)
   end
 end
@@ -652,6 +656,18 @@ kann, welcher der erste Commit ist und dann die Range manuell eingrenzen kann. \
 Falls aber der letzte fehlt, kann man das nicht mehr. Und was passiert, falls die History Rebased wird?
 Und in anderen Edge-Cases? Falls diese PA ein Produkt liefern will, welches in der Praxis eingesetzt wird,
 liefert das aktive Polling eine zusätzliche Schicht Sicherheit.
+
+\subsection{GitHub Token}
+Damit das Plugin die GitHub repositories abfragen kann, muss es sich authentifizieren. Dafür wird ein GitHub
+Token verwendet. Dieses wird im \bgmintinline{bash}{application.yml} als GITHUB\_ACCESS\_TOKEN gespeichert.
+\newline
+Um das Token zu erstellen, begibt man sich auf \url{https://github.com/settings/tokens} und klickt auf
+\enquote{Generate new Token} und wählt die \enquote{(classic)} Version aus. Danach gibt man dem Token zugriff
+auf \enquote{repo}, was bereits reichen sollte.
+\begin{center}
+  \includegraphics[width=0.8\textwidth]{images/misc/github-access-token.png}
+  \label{fig:setup_github_token}
+\end{center}
 
 \section{Erstellen der Views}
 Um die Implementation zu vervollständigen, müssen noch die Views erstellt werden. Für diese besteht bereits ein
@@ -760,7 +776,11 @@ class NewSectionHookListener < Redmine::Hook::ViewListener
         formatted_deployment_list << <<-LISTOBJECT
           <li>
             <a href='#{deployment['url']}' target='_blank'
-              id='deployment-#{deployment['id']}'>#{deployment['deploy_branch']}</a>
+              id='deployment-#{deployment['id']}'>
+                on "#{deployment['deploy_branch']}"
+                at #{deployment['ci_date'].strftime('%d.%m.%Y at %I:%M%p UTC')}
+                #{deployment['has_passed'] ? '✅' : '❌'} 
+              </a>
           </li>
         LISTOBJECT
       end
