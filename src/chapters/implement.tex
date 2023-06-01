@@ -1,11 +1,12 @@
 \chapter{Realisieren}
-In diesem Kapitel geht es um die Implementation der Software. Diese wird nach den Diagrammen aus dem Kapitel
+In diesem Kapitel geht es um die Implementation der Software. Diese richted sich nach den Diagrammen aus dem Kapitel
 \ref{chap:plan}, Planen.
 
 \section{Entwicklungsumgebung}
 \subsection{Versionierung}
 Für die Versionierung wird Git verwendet. Dabei wird GitHub als Remote-Repository verwendet. Das Repository mit
-dem Source-Code kann unter \url{https://github.com/aneshodza/gnosis} gefunden werden.
+dem Source-Code kann unter \url{https://github.com/aneshodza/gnosis} gefunden werden. Für eine genauere Beschreibung
+der Versionierung siehe Kapitel \ref{sec:versioning}.
 \subsection{IDE}
 Als IDE wird vim mit verschiedenen Plugins verwendet. Bestimmte Sachen wurden in der \bgmintinline{bash}{.vimrc} Datei
 konfiguriert, damit die Arbeit möglichst effizient ist. \newline
@@ -41,7 +42,7 @@ create  plugins/gnosis/test/test_helper.rb
 \end{codebox}
 
 Wenn wir dann mit \bgmintinline{bash}{cd plugins/gnosis} in das Plugin wechseln, sehen wir, dass bestimmte Dateien
-bereits wurden. Diese werden bei Gebrauch erklärt und aufgezeigt.
+bereits erstellt wurden. Diese werden bei Gebrauch erklärt und aufgezeigt.
 
 \subsection{Erstellen \& Konfigurieren des Repository}
 Das Projekt wird auf GitHub mit Git Versionsverwaltet, weshalb als Erstes ein GitHub Remote-Repository (auch einfach
@@ -66,15 +67,14 @@ Nun können wir den ersten Commit machen. Das können wir ganz einfach mit wenig
 \subsubsection{Git-flow initialisieren}
 Das Projekt wird nach der Git-flow Methode versioniert. Das bedeutet, dass der main Branch für die Releases
 verwendet wird und der develop Branch für die Entwicklung. \newline
-Dann hat man auch feature, bugfix und hotfix Branches, welche alle selbsterklärend sind. \newline
-Für jedes AP wird ein feature Branch erstellt, welcher dann in den develop Branch gemerged wird. \newline
-Als erstes müssen wir den develop branch mit \bgmintinline{bash}{git checkout -b develop} erstellen und diesen
+Dafür müssen wir den develop branch mit \bgmintinline{bash}{git checkout -b develop} erstellen und diesen
 mit \bgmintinline{bash}{git push -u origin develop} auf remote pushen. \newline
 
 \subsection{Erstellen des README}
 Beim Erstellen des Plugins wurde automatisch ein \enquote{README.rdoc} erstellt. Dieses wird bei Ruby Projekten
-oft anstatt eines \enquote{README.md} verwendet. Da diese PA nach Vorgaben von Redmine arbeitet, wird auch das
-README im rdoc Format geschrieben. \newline
+oft anstatt eines \enquote{README.md} verwendet. Da diese PA nach Vorgaben von Redmine arbeitet, wird auch ein
+README im rdoc Format geschrieben. Es wird auch eins im README Format geschrieben, welches mehr ausführt, da dieses
+bereits beim öffnen des Repositores auf GitHub sichtbar ist. \newline
 Da noch nicht viel im Projekt steht, wird nur beschrieben was genau das Plugin kann und wie es funktioniert.
 
 \subsection{Aufsetzen der CI/CD Pipeline}
@@ -246,7 +246,7 @@ grün sein: \newline
 Um die Test-Coverage zu messen, wird SimpleCov verwendet. SimpleCov ist ein Ruby Gem, welches die Test-Coverage misst und
 dann in einem HTML Report ausgibt. Ausserdem kann man eine minimale Test-Coverage definieren, welche beim Unterschreiten
 die Tests fehlschlagen lässt. Damit das funktioniert müssen wir SimpleCov einbinden und dann die Dateien, welche wir
-auf ihre Test-Coverage prüfen wollen laden\newline
+auf ihre Test-Coverage prüfen wollen, laden\newline
 Die Implementation findet im test\_helper.rb statt und sieht wie folgt aus:
 \begin{codebox}[]
   \begin{minted}{ruby}
@@ -275,7 +275,8 @@ require File.expand_path("#{File.dirname(__FILE__)}/../../../test/test_helper")
 \end{codebox}
 \textbf{Zu beachten:} Auf Zeile acht wird die mindeste Zeilenanzahl der Dateien auf 7 anstatt 5 gesetzt. Das hat den
 Grund, dass Rails Klassen meistens mit einem \bgmintinline{ruby}{# frozen_string_literal: true} gefolgt von einer
-leeren Zeile beginnen. Das führt dazu, dass Klassen mit vier Zeilen zu Dateien mit sechs Zeilen führen. \newline
+leeren Zeile beginnen. Das führt dazu, dass Klassen mit vier Zeilen zu Dateien mit sechs Zeilen werden. Das wurde mit
+der VF so abgesprochen. \newline
 
 Wenn wir dann unser Plugin testen, gibt SimpleCov folgenden Report aus:
 \begin{codebox}
@@ -289,7 +290,7 @@ Damit die Tests mit Beispieldaten arbeiten können, wird FactoryBot in Kombinati
 Rubygem, welcher das Erstellen von Daten vereinfacht. In diesem Fall wird es aber nur für Testdaten genutzt. Um dann die
 Attribute zu befüllen wird Faker verwendet. Dieser Rubygem generiert zufällige Daten, wie beispielsweise Namen, Adressen
 oder Telefonnummern. \newline
-Damit FactoryBot verwendbar ist, muss man test\_helper.rb anpassen:
+Damit FactoryBot richtig eingebunden wird, muss man test\_helper.rb anpassen:
 \begin{codebox}[]
   \begin{minted}{ruby}
 FactoryBot.definition_file_paths = [File.expand_path('factories', __dir__)]
@@ -316,7 +317,7 @@ end
 \section{Umsetzung der Datenstruktur}
 Da unter Kapitel \ref{sec:decide_erd} die Entscheidung getroffen wurde die \enquote{has many trough} Beziehung zu
 verwenden, wird diese auch implementiert. Das bedeutet, dass wir zwei Objekte erstellen müssen: 
-\bgmintinline{ruby}{PullRequest} und \bgmintinline{ruby}{Deployment}. Diese muss man mit dem Redmine CLI generieren,
+\bgmintinline{ruby}{class PullRequest} und \bgmintinline{ruby}{class Deployment}. Diese muss man mit dem Redmine CLI generieren,
 damit die neuen Objekte richtig mit den anderen Objekten von Redmine interagieren können. Für das Generieren unserer
 Objekte muss man folgende Befehle ausführen:
 \begin{codebox}[]
@@ -376,7 +377,7 @@ end
 \end{codebox}
 
 Dann müssen wir die Environment-Keys aufsetzen. Das machen wir, indem wir eine YAML Datei lesen und in eine Konstante
-schreiben. Das tun wir wie folgt in \bgmintinline{bash}{init.rb}:
+schreiben. Das tun wir wie folgt im \bgmintinline{bash}{init.rb}:
 \begin{codebox}[]
   \begin{minted}{ruby}
 yaml_data = YAML.safe_load(ERB.new(
@@ -424,7 +425,7 @@ end
 
 Um dann die Objekte zu erstellen, muss eine neue Methode erstellt werden, welche die Parameter entgegennimmt und nur
 falls nötig ein neues Objekt erstellt. Ausserdem soll der Status auf \enquote{merged} gesetzt werden, falls die Pull
-Request bereits gemerged wurde. Diese Methode sieht wie folgt aus:
+Request bereits gemerged wurde oder auf \enquote{draft}, falls es ein Draft ist. Diese Methode sieht wie folgt aus:
 \begin{codebox}[]
   \begin{minted}{ruby}
 # app/models/pull_request.rb
@@ -556,7 +557,7 @@ class WebhooksController < ApplicationController
 end
   \end{minted}
 \end{codebox}
-Dann wird auf Zeile 20 des Ersten Codeblocks die Methode \bgmintinline{ruby}{create\_deploys\_for\_pull\_requests}
+Dann wird auf Zeile 20 des Ersten Codeblocks die Methode \bgmintinline{ruby}{def create\_deploys\_for\_pull\_requests}
 aufgerufen. Diese erstellt alle Deployment Objekte für die Pull Requests, welche in der Commit-History gefunden wurden.
 Dafür wird auch wie bei den Pull Requests eine \enquote{intelligente} create Methode erstellt:
 \begin{codebox}[]
@@ -600,7 +601,7 @@ die Zweite die Zeile.
 \end{center}
 
 \subsubsection{Webhook Sicherheit}
-Die Sicherheit der Semaphore Webhooks läuft sehr ähnlich wie die von GitHub ab: Es wird ein Secret Key verwendet,
+Die Sicherheit der Semaphore Webhooks läuft gleich wie die von GitHub ab: Es wird ein Secret Key verwendet,
 welcher vom Dienst mithilfe von HMAC-SHA256 signiert wird. Dieser wird dann im Header mitgeschickt. Somit erhaltet
 das Backend eine Signatur, welche mit dem Secret Key verifiziert werden kann. \newline
 Die Implementation sieht wie folgt aus:
@@ -619,8 +620,8 @@ def semaphore_webhook_catcher
 end
   \end{minted}
 \end{codebox}
-Es wird die gleiche \bgmintinline{ruby}{verify_signature} Methode wie zuvor verwendet. Nur die Parameter
-unterscheiden sich ganz leicht.
+Es wird die gleiche \bgmintinline{ruby}{def verify_signature} Methode wie zuvor verwendet. Nur die Parameter
+unterscheiden sich leicht.
 
 \subsubsection{Aufsetzen der Webhook}
 Hierfür begibt man sich auf \url{https://deine_organisation.semaphoreci.com/notifications} und klickt auf 
@@ -639,7 +640,7 @@ benannt und der Wert ist der Secret Key.
 \subsection{Wieso aktiv Gepollt wird}
 \label{sec:why_active_polling}
 Obwohl Software-Design Anforderung 5 besagt, dass aktives Polling der Dienste nicht vorkommen sollte, ist
-es bei guter Begründung erlaubt. In diesem Fall wurde aktiv GitHub abgefragt, weil die Informationen von
+es bei guter Begründung erlaubt. In diesem Fall wird aktiv GitHub abgefragt, weil die Informationen von
 den SemaphoreCI Webhooks nicht ausreichen. Diese geben nämlich eine \enquote{Commit-Range} an, anstatt
 eine Liste aller Commits, welche soeben released wurden. \newline
 Falls das Plugin alle GitHub Pull Requests richtig abfangen würde, dürfte das eigentlich kein Problem sein,
@@ -651,17 +652,18 @@ eingegrenzt werden kann. Das sieht ungefähr so aus:
   \label{fig:commit_range}
 \end{center}
 Falls aber der erste Commit in der Range fehlt, ist das eher weniger ein Problem, da man nachschauen
-kann, welcher der erste Commit ist und dann die Range manuell eingrenzen kann. \newline
+kann, welcher der erste, noch nicht releaste, Commit ist und dann die Range manuell eingrenzen kann. \newline
 Falls aber der letzte fehlt, kann man das nicht mehr. Und was passiert, falls die History Rebased wird?
 Und in anderen Edge-Cases? Falls diese PA ein Produkt liefern will, welches in der Praxis eingesetzt wird,
-liefert das aktive Polling eine zusätzliche Schicht Sicherheit.
+liefert das aktive Polling eine zusätzliche Schicht Sicherheit, dass die kommunizierten Daten wahrheitsgetreu
+sind.
 
 \subsection{GitHub Token}
-Damit das Plugin die GitHub repositories abfragen kann, muss es sich authentifizieren. Dafür wird ein GitHub
+Damit das Plugin die GitHub Repositories abfragen kann, muss es sich authentifizieren. Dafür wird ein GitHub
 Token verwendet. Dieses wird im \bgmintinline{bash}{application.yml} als GITHUB\_ACCESS\_TOKEN gespeichert.
 \newline
 Um das Token zu erstellen, begibt man sich auf \url{https://github.com/settings/tokens} und klickt auf
-\enquote{Generate new Token} und wählt die \enquote{(classic)} Version aus. Danach gibt man dem Token zugriff
+\enquote{Generate new Token} und wählt die \enquote{(classic)} Version aus. Danach gibt man dem Token Zugriff
 auf \enquote{repo}, was bereits reichen sollte.
 \begin{center}
   \includegraphics[width=0.8\textwidth]{images/misc/github-access-token.png}
@@ -670,7 +672,7 @@ auf \enquote{repo}, was bereits reichen sollte.
 
 \section{Erstellen der Views}
 Um die Implementation zu vervollständigen, müssen noch die Views erstellt werden. Für diese besteht bereits ein
-Mockup, welches in Abbildung \ref{fig:mockup_sublists} dargestellt wird.
+Mockup (Abbildung \ref{fig:mockup_sublists}).
 \subsection{Aufsetzen der Hook}
 Da die View dieser PA nicht auf einer eigenen Seite, sondern unter Issue Details angezeigt wird, kann man nicht
 einfach einen Controller erstellen, welcher die View zurückschickt. Es wird ein von Redmine eingebautes Feature
@@ -687,15 +689,15 @@ end
   \end{minted}
 \end{codebox}
 Der Parameter \bgmintinline{ruby}{context={}} enthält wichtige Informationen zum Kontext in welchem die View 
-angefragt wurde. In diesem Fall sind das beispielsweise: die Issue-ID, das Projekt und so weiter. \newline
+angefragt wurde. In diesem Fall sind das beispielsweise das Issue, Projekt und so weiter. \newline
 \subsection{Laden der Daten}
-Als Nächstes müssen die Daten aus der Datenbank geladen werden. Für diesen Call müssen alle Pull Requests, welche
-zu diesem Issue gehören, sowie dessen Deployments geladen werden. \newline
+Als Nächstes werden die Daten aus der Datenbank geladen. Für diesen Call müssen alle Pull Requests, welche
+zu diesem Issue gehören, sowie dessen Deployments abgefragt werden. \newline
 Die Pull Requests können mit \bgmintinline{ruby}{@prs = PullRequest.where(issue_id: @context[:issue].id).to_a}
-geladen werden. Dessen Deployments dann mit
+per ORM geholt werden. Dessen Deployments widerrum dann mit
 \bgmintinline{ruby}{@deployments = @prs.map { |pr| Deployment.where(pull_request_id: pr['id']).to_a } }. \newline
 \subsection{Rendern der View}
-Die View selbst ist der Return Value der \bgmintinline{ruby}{def view_issues_show_description_bottom} Methode. Diese
+Die View selbst ist der Return Value der \bgmintinline{ruby}{def view_issues_show_description_bottom} Methode. Dieser
 muss in Form eines Strings zurückgegeben werden, welcher dann als HTML interpretiert wird. \newline
 Das bedeutet, dass das HTML für die View im Backend in Ruby Code geschrieben werden muss. Als Erstes braucht es das
 Grundgerüst der View. Dieses sieht wie folgt aus:
@@ -778,7 +780,7 @@ class NewSectionHookListener < Redmine::Hook::ViewListener
               id='deployment-#{deployment['id']}'>
                 on "#{deployment['deploy_branch']}"
                 at #{deployment['ci_date'].strftime('%d.%m.%Y at %I:%M%p UTC')}
-                #{deployment['has_passed'] ? '✅' : '❌'} 
+                #{deployment['has_passed'] ? 'p' : 'x'} 
               </a>
           </li>
         LISTOBJECT
@@ -806,7 +808,7 @@ end
 \end{codebox}
 \subsection{Registrieren der Hook}
 Damit die View angezeigt wird, muss die Hook noch in der \bgmintinline{bash}{init.rb} Datei registriert werden. Das
-kann man einfach mit einem \bgmintinline{ruby}{require} machen. Das init.rb sieht dann wie folgt aus:
+kann man einfach mit einem \bgmintinline{ruby}{require} machen. Das \bgmintinline{bash}{init.rb} sieht dann wie folgt aus:
 \begin{codebox}[]
   \begin{minted}{ruby}
 # init.rb
