@@ -6,13 +6,13 @@ Dieser Abschnitt protokolliert das Testkonzept (siehe Kapitel \ref{sec:testkonze
 \label{sec:manual-tests}
 Die manuellen Tests wurden unter \ref{sec:manual-testing} vorgegeben. Hier werden die Ergebnisse
 dokumentiert.
-\begin{tabularx}{\textwidth}[H]{|c|X|X|}
+\begin{tabularx}{\textwidth}[H]{|c|X|X|X|}
     \hline
-    \textbf{Nr.} & \textbf{Resultat} & \textbf{Datum und Uhrzeit} \\ \hline
-    1 & Bestanden & 1. Juni 2023, 16:20 \\ \hline
-    2 & Bestanden & 1. Juni 2023, 16:25 \\ \hline
-    3 & Bestanden & 1. Juni 2023, 16:35 \\ \hline
-    4 & Bestanden & 1. Juni 2023, 16:40 \\ \hline
+    \textbf{Nr.} & \textbf{Resultat} & \textbf{Datum und Uhrzeit} & \textbf{Person}\\ \hline
+    1 & Bestanden & 1. Juni 2023, 16:20 & Anes Hodza\\ \hline
+    2 & Bestanden & 1. Juni 2023, 16:25 & Anes Hodza\\ \hline
+    3 & Bestanden & 1. Juni 2023, 16:35 & Anes Hodza\\ \hline
+    4 & Bestanden & 1. Juni 2023, 16:40 & Anes Hodza\\ \hline
 \end{tabularx}
 
 \subsection{Automatisierte Tests}
@@ -114,3 +114,13 @@ wenig Brücken zu Redmine schlägt. \newline
 Damit das Plugin funktioniert, muss Redmine gar nicht angepasst werden, wie in der CI sichtbar. Dort wird
 das Plugin einfach installiert und es funktioniert. Auch die Brücken zu Redmine sind sehr klein. Das einzige,
 was von Redmine genutzt wird, ist das Issue Objekt. Dieses wird aber nur gelesen und nicht verändert.
+
+\section{Reife der Rails Lösung}
+Eine der Kriterien ist die Reife der Rails Lösung, also ob das Produkt in der Produktionsumgebung
+eingesetzt werden kann. \newline
+Da es eine Test Coverage von 100\% hat, sowie auch problemlos mit der neusten Redmine Version funktioniert,
+kann es in der Produktionsumgebung eingesetzt werden. Und falls wenige Sachen ausgebessert werden müssten,
+wie zum Beispiel das Handling bei History-Veränderungen, ist das sehr schnell erledigt. Die Codebase ist
+sauber und deswegen einfach zu erklären und warten. \newline
+Plan B für SemaphoreCI fügte noch eine weitere Schicht Sicherheit hinzu, indem es dem Nutzer garantiert,
+dass die richtigen Pull Requests mit Deployments befüllt wurden.
