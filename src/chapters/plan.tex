@@ -4,7 +4,7 @@
 Die Zeitplanung wird in der Abbildung \ref{fig:timeplan} oberhalb gezeigt. Die restlichen Aspekte der Planung sind in diesem Kapitel dokumentiert.
 
 \section{Namensgebung}
-Das Repository sowie Projekt werden \enquote{gnosis} genannt. Dieser Name kommt aus dem Altgriechischen und bedeutet
+Das Repository sowie Projekt werden \enquote{Gnosis} genannt. Dieser Name kommt aus dem Altgriechischen und bedeutet
 \enquote{Wissen}. Der Name wurde gewählt, da das Projekt dem Nutzer Wissen über den Development-Stand des Projektes
 vermitteln soll. 
 
@@ -13,10 +13,12 @@ In diesem Abschnitt werden verschiedene Diagramme präsentiert, welche zur bildl
 \subsection{Use-Case-Diagramm}
 Damit die Anforderungen genauer spezifiziert werden können, wird ein Use-Case-Diagramm erstellt. Dieses zeigt die verschiedenen
 Aktionen, welche die Akteure (Nutzer und Dienste) ausführen können.
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/use-case/base.png}
+  \caption[Ein Use-Case-Diagramm, welches die verschiedenen Systemanforderungen aufzeigt]{Use-Case-Diagramm mit Systemanforderungen}
   \label{fig:use_case}
-\end{center}
+\end{figure}
 \subsection{Entity-Relationship-Diagram}
 Das ERD zeigt die Beziehungen zwischen den einzelnen Entitäten. Da diese PA nur ein Plugin ist, welches neben
 bereits bestehenden Entitäten seine eigenen erstellt, wird dort abgegrenzt. Nur Entitäten vom Plugin und
@@ -27,91 +29,107 @@ Dokumentation über Pull Requests \cite{github_webhooks_pr} erstellt.
 
 \subsubsection{Option 1: Mehrere Entitäten}
 Die erste Option ist, dass für Deployments und Pull-Requests eigene Entitäten erstellt werden. Das würde wie folgt aussehen:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/erd/multiple.png}
   \label{fig:erd_multiple}
-\end{center}
+  \caption[Ein ERD, welches eine separate Entität für Deployments und Pull-Requests aufzeigt.]{ERD mit separaten Entitäten.}
+\end{figure}
 
 \subsubsection{Option 2: Inheritance}
 Die zweite Option ist, dass für Deployments und Pull-Requests keine eigenen Entitäten erstellt werden, sondern diese von
 einer gemeinsamen Entität erben. Das würde wie folgt aussehen:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/erd/inheritance.png}
+  \caption[Ein ERD, welches die Vererbung zwischen Issues und Deployments mit dem Parent Action aufzeigt.]{ERD mit der Vererbung.}
   \label{fig:erd_inheritance}
-\end{center}
+\end{figure}
 
 \subsubsection{Option 3: Has many through}
 Die dritte Option ist, dass Deployments mit einer \enquote{has-many} Beziehung mit Pull-Requests verbunden werden. In diesem Fall hätte jedes
 Issue mehrere Deployments \enquote{durch} die Pull-Requests. Daher der Name. Das würde wie folgt aussehen:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/erd/has_many_through.png}
+  \caption[Ein ERD, welches die \enquote{has-many-through} Beziehung zwischen Issues und Deployments aufzeigt.]{ERD mit der \enquote{has-many-through} Beziehung zwischen Issues und Deployments.}
   \label{fig:erd_has_many_through}
-\end{center}
+\end{figure}
 
 \subsection{Activity-Diagram}
 \label{sec:activity_diagram}
 Das Activity-Diagramm zeigt den Ablauf des Plugins. In diesem Fall gibt es zwei Abläufe:
 \begin{itemize}
   \item Hook von SemaphoreCI oder GitHub
-  \item Abfragen der Issues \newline
+  \item Abfragen der Issues
 \end{itemize}
 
 \subsubsection{Hook call}
-Die Hook calls werden von SemaphoreCI oder GitHub ausgelöst. Beide bei unterschiedlichen Events, welche beide mit Sanduhren
+Die Hook Calls werden von SemaphoreCI oder GitHub ausgelöst. Beide bei unterschiedlichen Events, welche beide mit Sanduhren
 dargestellt wurden:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/webhook.png}
+  \caption[Ein Activity-Diagramm, auf welchem die Verarbeitung der Webhook Daten aufgezeigt wird.]{Activity-Diagramm, welches das Speichern der Daten aufzeigt.}
   \label{fig:activity_hook_call}
-\end{center}
+\end{figure}
 
 \subsubsection{SemaphoreCI Plan B}
 Da SemaphoreCI in den Webhook Daten nicht alle Commit-Hashes, sondern nur eine Range mitliefert, kann es sein, dass die
-Informationen über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
-SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen wie die Commit-Geschichte aussieht. So
-ungefähr würde das aussehen: \newline
-\begin{center}
+Informationen, über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
+SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen, wie die Commit-Geschichte aussieht. So
+ungefähr würde das aussehen:
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/semaphore-backup-hooks.png}
+  \caption[Ein Activity-Diagramm, welches den Backup-Plan für SemaphoreCI aufzeigt.]{Activity-Diagramm für den Backup-Plan von SemaphoreCI.}
   \label{fig:activity_plan_b}
-  \newline
-\end{center}
+\end{figure}
 Falls diese Option implementiert wird, ändert sich das Deployment Diagramm ganz leicht, da jetzt
-eine neue Brücke vom Plugin zu GitHub existiert. In rot markiert ist die neue Brücke: \newline
-\begin{center}
+eine neue Brücke vom Plugin zu GitHub existiert. In Rot markiert ist die neue Brücke:
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/deployment/backup-hooks.png}
+  \caption[Das Deployment Diagramm aus \ref{fig:deployment-diagram} mit der neuen Brücke in Rot gekennzeichnet.]{Deployment Diagramm mit der neuen Brücke.}
   \label{fig:activity_plan_b_deployment}
-\end{center}
+\end{figure}
 
 \subsubsection{Abfrage der Issues}
 Falls der Nutzer auf die Details eines Issues klickt, wird eine Abfrage an das Plugin gesendet, welches die Pull Requests sowie
-Deployments abfragt und diese zurückgibt: \newline
-\begin{center}
+Deployments abfragt und diese zurückgibt:
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/issues-view.png}
+  \caption[Activity-Diagramm, welches die Abfrage der Issues darstellt.]{Activity-Diagramm, welches die Abfrage der Issues darstellt.}
   \label{fig:activity_issues}
-\end{center}
+\end{figure}
 
 \subsection{Mockups}
 \label{sec:mockups}
 Damit die UI besser geplant werden kann, wird diese mit Mockups visualisiert. Diese Mockups sollen
 nur ungefähr wiedergeben, wie die UI aussehen soll. Da das Plugin auf einer bereits existierenden 
 Ansicht aufbaut, nämlich der Issue-View, wird diese nur sehr abstrahiert dargestellt. \newline
-Die bereits existierende Ansicht ist in der Abbildung mit weniger Opazität dargestellt. \newline
+Die bereits existierende Ansicht ist in der Abbildung mit weniger Opazität dargestellt.
 
-  \subsubsection{Zwei Listen}
-  Option eins ist, dass die Pull-Requests und Deployments in zwei Listen dargestellt werden. Das würde ungefähr so
-  aussehen: \newline
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{images/mockup/multiple-lists.png}
-    \label{fig:mockup_multi_lists}
-    \newline
-  \end{center}
+\subsubsection{Zwei Listen}
+Option eins ist, dass die Pull-Requests und Deployments in zwei Listen dargestellt werden. Das würde ungefähr so
+aussehen:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/mockup/multiple-lists.png}
+  \caption[Ein Mockup, bei welchem die Deployments und Pull Requests separate Listen haben.]{Mockup vom Zwei-Listen-Design.}
+  \label{fig:mockup_multi_lists}
+\end{figure}
 
-  \subsubsection{Eine Liste mit Unterlisten}
-  Die zweite Option ist, dass die Pull Requests aufgelistet werden und die Deployments als Unterlisten aufgelistet
-  werden. So würde das aussehen: \newline
-  \begin{center}
-    \includegraphics[width=0.8\textwidth]{images/mockup/sublists.png}
-    \label{fig:mockup_sublists}
-  \end{center}
+\subsubsection{Eine Liste mit Unterlisten}
+Die zweite Option ist, dass die Pull Requests aufgelistet werden und die Deployments als Unterlisten aufgelistet
+werden. So würde das aussehen:
+\begin{figure}
+  \centering 
+  \includegraphics[width=0.8\textwidth]{images/mockup/sublists.png}
+  \caption[Ein Mockup, bei welchem die Deployments als Unterlisten aufgelistet werden.]{Mockup vom Sublisten-Design.}
+  \label{fig:mockup_sublists}
+\end{figure}
 
 \section{Testkonzept}
 \label{sec:testkonzept}
@@ -130,7 +148,7 @@ SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sow
 fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
 
 \subsubsection{Weitere Tools}
-Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden sind:
+Tools, welche nicht von Redmine selbst verwendet werden, welche aber dennoch im Plugin verwendet werden, sind:
 \begin{itemize}
   \item \textbf{Faker} für das Erstellen von realistischen Testdaten.
   \item \textbf{FactoryBot} für das Initialisieren von Objekten.
@@ -159,7 +177,7 @@ weiter verfolgt wird. \newline
 \textbf{Benützen des Dienstes, damit dieser die Daten schickt} \\
 Die zweite Option ist, ein Repository auf GitHub zu erstellen und dieses mit SemaphoreCI / Github Webhooks zu
 verbinden. \newline
-Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP Tunnel
+Damit dann diese Daten beim lokalen Server ankommen können, müsste man mit ngrok \cite{ngrok_http_docs} einen HTTP-Tunnel
 erstellen, welcher eine öffentliche IP zur Verfügung stellt. \newline
 Diese Methode ist auch sehr aufwändig, doch liefert genauere Daten als Option eins, weshalb diese benutzt wird.
 
@@ -170,14 +188,14 @@ wird der Test nach folgenden Schritten durchgeführt:
   \item Ein Issue auf Redmine erstellen
   \item Auf GitHub ein Repository erstellen und dieses mit SemaphoreCI verbinden. 
   (\textbf{Wichtig:} Es muss ein Deploy-Skript erstellt werden. Dieses heisst wie folgt:
-  [branchname]-deploy.sh)
+  [branchname]-deploy.yml)
   \item Eine Pull Request erstellen und mergen.
   \item Warten, bis die Pipeline auf SemaphoreCI durchgelaufen ist
   \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
 \end{enumerate}
 
-\textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment angezeigt wird. Das kann entweder grün oder rot
-sein, je nachdem ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
+\textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues ein Deployment sichtbar wird. Das kann entweder grün oder rot
+sein, je nachdem, ob die Pipeline erfolgreich durchgelaufen ist oder nicht.
 
 \subsubsection{2. Verarbeiten von GitHub Daten}
 \label{sec:github-testing}
@@ -188,7 +206,7 @@ Das Testen von den GitHub Webhooks lauft sehr ähnlich ab:
   \item Eine GitHub Webhook erstellen, welche bei Pull Requests Daten schickt. (Die URL muss auf den lokalen Server zeigen)
   \item Einen feature Branch erstellen (\textbf{Wichtig:} Die Issue-Nummer muss im Branchnamen enthalten sein)
   \item Eine Pull Request erstellen
-  \item Auf dem Issue kontrollieren, ob die Daten korrekt angezeigt werden
+  \item Auf dem Issue kontrollieren, ob die Daten korrekt aufgelistet werden
 \end{enumerate}
 
 \textbf{Das zu erwartende Resultat ist,} dass in der Beschreibung des Issues eine Pull Request angezeigt wird. Da diese noch nicht gemerged
@@ -201,7 +219,7 @@ Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. 
 Software-Design Anforderung drei verlangt.
 
 \subsubsection{4. Der Nutzer schaut sich ein Issue an ohne Daten}
-Für diesen Testfall wird einfach auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
+Für diesen Testfall wird auf einer lokalen Redmine Instanz ein Issue erstellt. Dann wird in der Beschreibung des Tickets
 kontrolliert, was angezeigt wird. \newline
 \textbf{Das zu erwartende Resultat ist,} dass keine Daten angezeigt werden.
 
@@ -216,5 +234,10 @@ Als Testmittel werden folgende Tools verwendet:
   \item \textbf{Redmine} für das Erstellen von Issues
   \item \textbf{GitHub} für das Erstellen von Repositories und Pull Requests
   \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
-  \item \textbf{ngrok} für das Erstellen von HTTP Tunnels
+  \item \textbf{ngrok} für das Erstellen von HTTP-Tunnels
 \end{itemize}
+
+\subsection{Was bewusst nicht getestet wird}
+Da Git ein sehr komplexes System ist, werden bestimmte Edge-Cases nicht getestet. Damit ist hauptsächlich
+die Änderung von Git-History gemeint. Da das ohnehin nicht getan werden sollte, sprengt das den Rahmen
+dieser Arbeit. Das wäre aber eine gute Erweiterung für das Plugin.

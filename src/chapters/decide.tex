@@ -23,7 +23,7 @@ Child-Entitäten erstellt werden, welche beide von einer gemeinsamen Entität er
 Der grösste Vorteil dieser Option ist, dass die Vererbung die Codebase vereinfachen kann, falls richtig implementiert.
 \newline
 Nachteile sind, dass die Komplexität der Datenstruktur massiv erhöht wird. Vererbung ist in Datenbanken nicht üblich, was
-implementationen davon erschwert. Rails würde dabei einen grossen Teil er Arbeit abnehmen, dennoch bleibt die Komplexität
+Implementationen davon erschwert. Rails würde dabei einen grossen Teil er Arbeit abnehmen, dennoch bleibt die Komplexität
 hoch.
 
 \subsubsection{Option 3: Has many through}
@@ -43,9 +43,9 @@ Prozess zu gestalten. Im Design dieses Projektes muss man sich viel externen Pro
 Issue-Prozess vor und GitHub sowie SemaphoreCI die Webhook Prozesse.
 
 \subsection{Tech-Stack}
-Der Tech-Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine verwendet. Ausserdem
+Der Tech-Stack wird bereits von Redmine vorgegeben. Es wird Ruby on Rails mit ERB als Template-Engine benutzt. Ausserdem
 wird MiniTest mit Capybara für die Tests verwendet. \newline
-Die einzige Freiheit, welche geboten wird ist die Wahl der Datenbank.
+Die einzige Freiheit, welche geboten wird, ist die Wahl der Datenbank.
 
 \subsection{UI}
 Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil selbst gestaltet. Die Mockups unter Kapitel
@@ -55,12 +55,12 @@ Vor- und Nachteile. \newline
 
 \subsubsection{Option 1: Zwei Listen}
 Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
-die zweite darunter für Deployments. \newline
+die Zweite darunter für Deployments. \newline
 Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
 gehört. \newline
 
 \subsubsection{Eine Liste mit Unterlisten}
-Die zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
+Die Zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
 die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
 Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
 Pull Request einfacher zuzuordnen sind. \newline
@@ -117,4 +117,4 @@ Die Datenbank für die CI, sowie das lokale testen wird PostgreSQL sein, da dass
 \subsubsection{Entscheidung}
 Option zwei, aus Grafik \ref{fig:mockup_sublists}, wurde gewählt, da die Deployments besser zu den Pull Requests
 zugeordnet werden können. Der Nachteil ist, dass es sehr schnell sehr unübersichtlich werden kann, doch in der Realität
-hat es zu jedem Issue meistens eine Pull Request, weshalb das kein grosses Problem darstellt.
+hat es zu jedem Issue selten mehr als eine Pull Request, weshalb das kein grosses Problem darstellt.

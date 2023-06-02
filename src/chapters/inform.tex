@@ -27,14 +27,14 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
     \item Entscheiden
     \begin{description}
         \item[AP7: Bewerten von verschiedenen Optionen] Alle möglichen Optionen werden (falls es eine Entscheidung zum Treffen gibt) ausgewertet. Die Auswertemethode kann je nach Anwendungsfall verschieden sein.
-        \item[AP6: Entscheiden der Optionen] Nach der Auswertung, wird eine der Optionen genommen. Dies wird dokumentiert.
+        \item[AP6: Entscheiden der Optionen] Nach der Auswertung wird eine der Optionen genommen. Dies wird dokumentiert.
     \end{description}
     \item Realisieren
     \begin{description}
         \item[AP7: Aufsetzen des Projektes] Das Projekt wird aufgesetzt und mit GitHub verbunden. Das Gleiche gilt für die CI. \newline
         Es werden auch die nötigen Hooks auf allen nötigen Diensten eingestellt.
         \item[AP10: Umsetzen der Datenstruktur auf Basis der Diagramme] Die Datenstruktur wird im Projekt umgesetzt. Diese soll nicht von den Diagrammen abweichen.
-        \item[AP11: Daten erstellen und manipulieren] Das erstellen, sowie Manipulieren von Daten anhand der Webhooks soll umgesetzt werden.
+        \item[AP11: Daten erstellen und manipulieren] Das Erstellen sowie Manipulieren von Daten anhand der Webhooks soll umgesetzt werden.
         \item[AP12: Implementieren der Business-Logic] Die Business Logic wird implementiert. Damit ist das Auswerten der Daten gemeint.
         \item[AP13: Erstellen der Views] Die Views werden anhand der Mockups erstellt.
     \end{description}
@@ -44,7 +44,7 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
         Das individuelle Kriterium 7 (Automatisierte Tests) wird auch dokumentiert.
         \item[AP15: Versionierung beschreiben] Die Versionierung von Dokumentation sowie der Dokumentation
         werden beschrieben und aufgezeigt.
-        \item[AP16: Kopplung vom Hauptprogramm] In Retrospektive wird festgehalten wie gut das Programm vom Hauptprogramm abgekoppelt ist.
+        \item[AP16: Kopplung vom Hauptprogramm] In Retrospektive wird festgehalten, wie gut das Programm vom Hauptprogramm abgekoppelt ist.
     \end{description}
     \item Auswerten
     \begin{description}
@@ -53,14 +53,18 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
 \end{itemize}
 
 \section{Systemaufbau}
-Im Folgenden wird die Einbettung des Systems in das Gesamtsystem gezeigt, sowie die vorhandenen Schnittstellen und Akteure beschrieben.
+Im Folgenden wird die Einbettung des Systems in das Gesamtsystem gezeigt sowie die vorhandenen Schnittstellen und Akteure beschrieben.
 
 \subsection{Gesamtsystem}
 Das Gesamtsystem wird hier anhand eines Deployment-Diagramms dargestellt. Dieses zeigt die einzelnen Komponenten und deren Verbindungen.
-\begin{center}
+Diese PA ist in der Abbildung innerhalb der orangen Box dargestellt. Alles andere ist ausserhalb, hat aber einen Einfluss
+auf das System.
+\begin{figure}[H]
+    \centering
     \includegraphics[width=0.8\textwidth]{images/deployment/standard.png}
+    \caption[Deployment Diagramm als Systemabgrenzung mit dem System dieser PA in Orange markiert]{Deployment Diagramm als Systemabgrenzung}
     \label{fig:deployment-diagram}
-\end{center}
+\end{figure}
 
 \subsection{Schnittstellen}
 Dieses Kapitel beschreibt die in der Grafik \ref{fig:deployment-diagram} gezeigten Schnittstellen im Detail.
