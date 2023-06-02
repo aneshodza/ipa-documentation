@@ -180,12 +180,13 @@ ausführen:
 \item Tests ausführen
 \end{enumerate}
 
-Auf einem Activity Diagramm würde das so aussehen: \newline
-\begin{center}
+Auf einem Activity Diagramm würde das so aussehen:
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/ci-cd.png}
+  \caption[Activity Diagramm der CI/CD Pipeline]{Activity Diagramm der CI/CD Pipeline}
   \label{fig:activity_ci_cd}
-  \newline
-\end{center}
+\end{figure}
 
 Die oben beschriebene semaphore.yml Datei sieht dann so aus:
 \begin{codebox}[]
@@ -235,12 +236,13 @@ dass die Migrationen nicht durchlaufen können, wie in diesem StackOverflow issu
 Deswegen wird eine eigene Datenbank-Konfiguration verwendet.
 
 Nachdem das alles erledigt wurde, wird schnell ersichtlich, ob alles richtig ist oder nicht. In diesem Fall soll die CI
-grün sein: \newline
-\begin{center}
+grün sein:
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/ci-passed.png}
+  \caption[Screenshot des GitHub Status Checks, worauf SemaphoreCI sichtbar ist]{GitHub Status Checks mit SemaphoreCI}
   \label{fig:semaphore_ci_passed}
-  \newline
-\end{center}
+\end{figure}
 
 \subsubsection{SimpleCov}
 Um die Test-Coverage zu messen, wird SimpleCov verwendet. SimpleCov ist ein Ruby Gem, welches die Test-Coverage misst und
@@ -449,10 +451,12 @@ Wenn man diesen Code mit dem Activity Diagramm vergleicht, wird schnell ersichtl
 widergespiegelt wird. Hier ist das gleiche Activity Diagramm wie unter Kapitel \ref{fig:activity_hook_call} nochmals,
 aber mit Zeilen aus dem Code (Die erste Zahl sagt aus welchem Codeblock die Zeile stammt, die Zweite die Zeilennummer
 selbst).
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/pr_webhook_lines.png}
+  \caption[Activity Diagramm zu GitHub Pull Requests Webhook Daten mit Codezeilen]{GitHub Webhook Activity mit Codezeilen}
   \label{fig:activity_diagram_pr_webhook_lines}
-\end{center}
+\end{figure}
 
 \subsubsection{Webhook Sicherheit}
 Unter Kapitel \ref{sec:webhook_prework} wurde die CSRF Protection deaktiviert. Dies ist ein Sicherheitsrisiko, da
@@ -489,10 +493,12 @@ Um die Webhook aufzusetzen, begibt man sich auf \url{https://github.com/org/repo
 \enquote{Add Webhook}. Die Payload url ist \enquote{Deine URL + /github\_webhook}. Der Secret Key ist ein beliebiger
 String, welcher im Backend als Umgebungsvariable gesetzt werden muss. Schlussendlich muss man noch die Events
 auswählen, welche gesendet werden sollen. In diesem Fall sind dies die \enquote{Pull requests}.
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/setup_webhook.png}
+  \caption[Screenshot vom GitHub Webhook Setup]{GitHub Webhook Setup}
   \label{fig:github_webhook}
-\end{center}
+\end{figure}
 
 \subsection{Deployment Objekte}
 Zunächst wird der Event Listener für die Deployment Objekte erstellt, welcher auf die Webhook Events von Semaphore
@@ -595,10 +601,12 @@ end
 Auch hier schlägt die Implementation klare Brücken zu den Activity-Diagrammen. In folgender Grafik ist das
 Activity-Diagramm aus Kapitel \ref{fig:activity_plan_b} mit Code Zeilen notiert. Die erste Zahl ist der Codeblock und
 die Zweite die Zeile.
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/activity/plan_b_code.png}
+  \caption[Activity Diagramm zu SemaphoreCI Webhook Daten mit Codezeilen]{SemaphoreCI Webhook Activity mit Codezeilen}
   \label{fig:activity_plan_b_code}
-\end{center}
+\end{figure}
 
 \subsubsection{Webhook Sicherheit}
 Die Sicherheit der Semaphore Webhooks läuft gleich wie die von GitHub ab: Es wird ein Secret Key verwendet,
@@ -632,10 +640,12 @@ seine URL + /semaphore\_webhook, sowie WEBHOOK\_SECRET unter \enquote{Secret Nam
 Danach muss die Signatur aufgesetzt werden. Dafür geht man unter
 \url{https://deine_organisation.semaphoreci.com/secrets} und klickt auf \enquote{New Secret}. Das wird WEBHOOK\_SECRET
 benannt und der Wert ist der Secret Key.
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/setup_semaphore_webhook.png}
+  \caption[Screenshot des Setups des SemaphoreCI Secret Key]{Setup des SemaphoreCI Secret Key}
   \label{fig:setup_semaphore_webhook}
-\end{center}
+\end{figure}
 
 \subsection{Wieso aktiv Gepollt wird}
 \label{sec:why_active_polling}
@@ -647,10 +657,12 @@ Falls das Plugin alle GitHub Pull Requests richtig abfangen würde, dürfte das 
 doch das würde zu einem \enquote{Single Point of failure} führen. Falls nur schon eine Pull Request verpasst
 wird, kann es sein, dass diese direkt am Rand der \enquote{Commit-Range} liegt und somit die Range nicht
 eingegrenzt werden kann. Das sieht ungefähr so aus:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/missed_commit_range.png}
+  \caption[UMLet Diagramm eines Beispiels für verpasste Commits]{Beispiel für verpasste Commits}
   \label{fig:commit_range}
-\end{center}
+\end{figure}
 Falls aber der erste Commit in der Range fehlt, ist das eher weniger ein Problem, da man nachschauen
 kann, welcher der erste, noch nicht releaste, Commit ist und dann die Range manuell eingrenzen kann. \newline
 Falls aber der letzte fehlt, kann man das nicht mehr. Und was passiert, falls die History Rebased wird?
@@ -665,10 +677,12 @@ Token verwendet. Dieses wird im \bgmintinline{bash}{application.yml} als GITHUB\
 Um das Token zu erstellen, begibt man sich auf \url{https://github.com/settings/tokens} und klickt auf
 \enquote{Generate new Token} und wählt die \enquote{(classic)} Version aus. Danach gibt man dem Token Zugriff
 auf \enquote{repo}, was bereits reichen sollte.
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/github-access-token.png}
+  \caption[Screenshot des GitHub Access Tokens]{GitHub Access Token}
   \label{fig:setup_github_token}
-\end{center}
+\end{figure}
 
 \section{Erstellen der Views}
 Um die Implementation zu vervollständigen, müssen noch die Views erstellt werden. Für diese besteht bereits ein
@@ -818,7 +832,9 @@ require_relative 'lib/issue_details_hook_listener'
 \end{codebox}
 \subsection{Resultat}
 Diese Komponenten zusammen ergeben dann folgende View:
-\begin{center}
+\begin{figure}[H]
+  \centering
   \includegraphics[width=0.8\textwidth]{images/misc/issue_details.png}
+  \caption[Screenshot eines Issues mit ausgebauter View]{Issue mit ausgebauter View}
   \label{fig:issue_details}
-\end{center}
+\end{figure}
