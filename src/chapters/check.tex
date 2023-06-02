@@ -115,4 +115,12 @@ Damit das Plugin funktioniert, muss Redmine gar nicht angepasst werden, wie in d
 das Plugin einfach installiert und es funktioniert. Auch die Brücken zu Redmine sind sehr klein. Das einzige,
 was von Redmine genutzt wird, ist das Issue Objekt. Dieses wird aber nur gelesen und nicht verändert.
 
-\section{Reife der Rails-Lösung}
+\section{Reife der Rails Lösung}
+Eine der Kriterien ist die Reife der Rails Lösung, also ob das Produkt in der Produktionsumgebung
+eingesetzt werden kann. \newline
+Da es eine Test Coverage von 100\% hat, sowie auch problemlos mit der neusten Redmine Version funktioniert,
+kann es in der Produktionsumgebung eingesetzt werden. Und falls wenige Sachen ausgebessert werden müssten,
+wie zum Beispiel das Handling bei History-Veränderungen, ist das sehr schnell erledigt. Die Codebase ist
+sauber und deswegen einfach zu erklären und warten. \newline
+Plan B für SemaphoreCI fügte noch eine weitere Schicht Sicherheit hinzu, indem es dem Nutzer garantiert,
+dass die richtigen Pull Requests mit Deployments befüllt wurden.
