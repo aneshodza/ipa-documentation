@@ -6,17 +6,19 @@ Dieser Abschnitt protokolliert das Testkonzept (siehe Kapitel \ref{sec:testkonze
 \label{sec:manual-tests}
 Die manuellen Tests wurden unter \ref{sec:manual-testing} vorgegeben. Hier werden die Ergebnisse
 dokumentiert.
-\begin{tabularx}{\textwidth}[H]{|c|X|X|X|}
+\begin{tabularx}{\textwidth}[H]{|c|X|X|X|X|}
     \hline
-    \textbf{Nr.} & \textbf{Resultat} & \textbf{Datum und Uhrzeit} & \textbf{Person}\\ \hline
-    1 & Bestanden & 1. Juni 2023, 16:20 & Anes Hodza\\ \hline
-    2 & Bestanden & 1. Juni 2023, 16:25 & Anes Hodza\\ \hline
-    3 & Bestanden & 1. Juni 2023, 16:35 & Anes Hodza\\ \hline
-    4 & Bestanden & 1. Juni 2023, 16:40 & Anes Hodza\\ \hline
-    5 & Bestanden & 2. Juni 2023, 18:30 & Anes Hodza \\ \hline
+    \textbf{Nr.} & \textbf{Resultat} & \textbf{Datum und Uhrzeit} & \textbf{Person} & \textbf{Fazit} \\ \hline
+    1 & Bestanden & 1. Juni 2023, 16:20 & Anes Hodza & Das Verarbeiten der Daten geht sehr gut. Da Deployments
+    aber ein wenig Zeit in Anspruch nehmen, ist es nicht direkt im Issue. \\ \hline
+    2 & Bestanden & 1. Juni 2023, 16:25 & Anes Hodza & Die Daten sind fast direkt auf Redmine. \\ \hline
+    3 & Bestanden & 1. Juni 2023, 16:35 & Anes Hodza & Das geht sehr gut und die Auflistung ist sehr
+    übersichtlich. Die Ladezeit verändert sich auch nicht (bemerkbar). \\ \hline
+    4 & Bestanden & 1. Juni 2023, 16:40 & Anes Hodza & Es steht direkt, dass es keine Pull Requests gibt. 
+    Auch hier keine extra Ladezeit. \\ \hline
+    5 & Bestanden & 2. Juni 2023, 18:30 & Anes Hodza & Das Wechseln der Redmine Version nimmt viel Zeit in 
+    Anspruch, aber es funktioniert einwandfrei. \\ \hline
 \end{tabularx}
-\textbf{Wichtig:} Bei Fall fünf wurde die nokogiri Version angepasst (anstatt die Default-Version von Redmine zu nehmen).
-Das hatte den Grund, dass das Gerät auf welchem getestet wurde, ein Kompatibilitätsproblem mit der Default Version hatte.
 
 \subsection{Automatisierte Tests}
 \label{sec:automated-tests}
