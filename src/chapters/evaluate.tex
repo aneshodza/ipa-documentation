@@ -1,2 +1,20 @@
 \chapter{Auswerten}
+In diesem Kapitel wird die PA kritisch ausgewertet. Dabei wird auf die Erfüllung der Anforderungen eingegangen
+und die Probleme, welche während der PA aufgetreten sind, beschrieben.
+\section{Erfüllungsgrad der Anforderungen}
+Das erhaltene Produkt dieser PA hat zwei Teile: Die Dokumentation und das Programm.
+\subsection{Dokumentation}
+Die Dokumentation stammt von einem Template \cite{Buhler_ipa-template_2022} ab, welches in LaTeX geschrieben
+wurde: Eine ganze \enquote{Programmiersprache}, welche sich sehr gut für Dokumentationen eignet. Dinge wie der
+Glossar oder das Abbildungsverzeichnis werden von LaTeX automatisch generiert. \newline
+Dazu wurde auch sehr viel Wert auf das Einhalten des Kriterienkatalogs gelegt, weshalb die Dokumentation auch
+sehr vollständig sein.
+\subsection{Programm}
+Das Programm ist ein, komplett von Redmine abgekoppeltes, Plugin. Es wurde mit ERB und Ruby geschrieben, während
+die (mit 100\% coverage) Tests mit MiniTest geschrieben wurden. Auch hier werden alle Kriterien erfüllt, da die
+Anforderungen als \enquote{Leitfaden} genutzt wurden. Mit einer guten Planung für die Umsetzung ging auch die
+Umsetzung sehr schnell. \newline
+Was nicht gelungen ist, ist das aktive Polling zu vermeiden. Das heisst, dass das Plugin nach einer SemaphoreCI
+Request zu GitHub geht und diesen Dienst nach einer Commit History fragt. Dies wird unter Kapitel
+\ref{sec:why_active_polling} genauer beschrieben.
 \section{Reflexion}
