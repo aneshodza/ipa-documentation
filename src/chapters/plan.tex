@@ -8,7 +8,7 @@ Das Repository sowie Projekt werden \enquote{Gnosis} genannt. Dieser Name kommt 
 \enquote{Wissen}. Der Name wurde gewählt, da das Projekt dem Nutzer Wissen über den Development-Stand des Projektes
 vermitteln soll. 
 
-\section{Diagramme}
+\section{Diagramme (Verfeinerung)}
 In diesem Abschnitt werden verschiedene Diagramme präsentiert, welche zur bildlichen Darstellung des Systems dienen sollen.
 \subsection{Use-Case-Diagramm}
 Damit die Anforderungen genauer spezifiziert werden können, wird ein Use-Case-Diagramm erstellt. Dieses zeigt die verschiedenen
@@ -228,6 +228,11 @@ Für diesen Testfall wird die lokale Redmine Instanz auf Version 4 gesetzt. Dann
 alles was in Fällen 1-4 getestet wurde, nochmals getestet. \newline
 \textbf{Das zu erwartende Resultat ist,} dass alles funktioniert wie in den Fällen 1-4.
 
+\subsubsection{6. Das Plugin funktioniert auf Chrome, sowie Firefox}
+Für diesen Testfall werden Tests 3 und 4 auf Chrome und Firefox durchgeführt. Es müssen nur Fälle 3 und 4
+ausgeführt werden, da die anderen nur im Backend etwas machen und dieser Testfall das UI testet. \newline
+\textbf{Das zu erwartende Resultat ist,} dass alles funktioniert wie in den Fällen 3 und 4.
+
 \subsection{Testmittel}
 Als Testmittel werden folgende Tools verwendet:
 \begin{itemize}
@@ -236,6 +241,15 @@ Als Testmittel werden folgende Tools verwendet:
   \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
   \item \textbf{ngrok} für das Erstellen von HTTP-Tunnels
 \end{itemize}
+
+\subsection{Testumgebung}
+Die Testumgebung unterscheidet sich zwischen den automatisierten und manuellen Tests.
+\subsubsection{Automatisierte Tests}
+Die automatisierten Tests werden auf SemaphoreCI ausgeführt. Diese laufen auf einem Ubuntu Server, welcher eine
+\enquote{semaphore.yml} Datei hat. Diese Datei definiert, welche Schritte ausgeführt werden sollen.
+\subsubsection{Manuelle Tests}
+Die manuellen Tests werden auf dem lokalen Gerät des Kandidaten ausgeführt. Dieses Gerät läuft auf MacOS und nutzt
+den Firefox, sowie Chrome Browser um die Kompatibilität zu testen.
 
 \subsection{Was bewusst nicht getestet wird}
 Da Git ein sehr komplexes System ist, werden bestimmte Edge-Cases nicht getestet. Damit ist hauptsächlich
