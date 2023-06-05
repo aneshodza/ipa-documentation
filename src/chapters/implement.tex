@@ -1,6 +1,7 @@
 \chapter{Realisieren}
-In diesem Kapitel geht es um die Implementation der Software. Diese richted sich nach den Diagrammen aus dem Kapitel
-\ref{chap:plan}, Planen.
+In diesem Kapitel geht es um die Implementation der Software. Diese richtet sich nach der, in den vorherigen
+Kapiteln beschriebenen, Planung. Die Datenstruktur, sowie die Activities werden hier nach den Diagrammen aus
+Kapitel \ref{chap:plan}, Planen umgesetzt.
 
 \section{Aufsetzen des Projektes}
 Zu Beginn wird Arbeitspaket 7, Aufsetzen des Projektes, implementiert. Dazu sind folgende Schritte zu befolgen:
@@ -96,6 +97,7 @@ fi
   \end{minted}
 \end{codebox}
 
+\newpage
 Dann braucht es ein \bgmintinline{bash}{bin/fastcheck} für linter und so weiter mit folgendem Inhalt:
 \begin{codebox}[]
   \begin{minted}{bash}
@@ -146,9 +148,13 @@ fi
   \end{minted}
 \end{codebox}
 
+\newpage
 Dann braucht es ein \bgmintinline{bash}{bin/setup} für das aufsetzen des Projektes mit folgendem Inhalt:
 \begin{codebox}[]
   \begin{minted}{bash}
+#!/bin/bash
+
+cp config/application.example.yml config/application.yml
 yarn install
 bundle exec rake redmine:plugins:migrate
   \end{minted}
@@ -158,10 +164,10 @@ bundle exec rake redmine:plugins:migrate
 Was wir noch machen müssen, ist die \bgmintinline{bash}{semaphore.yml} Datei zu erstellen. Diese muss ungefähr folgenden Ablauf
 ausführen:
 \begin{enumerate}
-\item Redmine klonen und Aufsetzen
+\item Redmine klonen und aufsetzen
 \item Postgres starten
 \item Datenbank erstellen und migrieren
-\item In das Plugins directory wechseln
+\item In das \bgmintinline{bash}{plugins} Directory wechseln
 \item Plugin klonen
 \item Tests ausführen
 \end{enumerate}
@@ -174,6 +180,7 @@ Auf einem Activity Diagramm würde das so aussehen:
   \label{fig:activity_ci_cd}
 \end{figure}
 
+\newpage
 Die oben beschriebene semaphore.yml Datei sieht dann so aus:
 \begin{codebox}[]
   \begin{minted}{yaml}
@@ -221,6 +228,7 @@ dass die Migrationen nicht durchlaufen können, wie in diesem StackOverflow issu
 \newline
 Deswegen wird eine eigene Datenbank-Konfiguration verwendet.
 
+\newpage
 Nachdem das alles erledigt wurde, wird schnell ersichtlich, ob alles richtig ist oder nicht. In diesem Fall soll die CI
 grün sein:
 \begin{figure}[H]
@@ -231,10 +239,10 @@ grün sein:
 \end{figure}
 
 \subsubsection{SimpleCov}
-Um die Test-Coverage zu messen, wird SimpleCov verwendet. SimpleCov ist ein Ruby Gem, welches die Test-Coverage misst und
-dann in einem HTML Report ausgibt. Ausserdem kann man eine minimale Test-Coverage definieren, welche beim Unterschreiten
-die Tests fehlschlagen lässt. Damit das funktioniert müssen wir SimpleCov einbinden und dann die Dateien, welche wir
-auf ihre Test-Coverage prüfen wollen, laden\newline
+Um die Test-Coverage zu messen, wird das Ruby Gem SimpleCov verwendet. Dieses generiert einen HTML Report und kann bei
+zu tiefer Coverage die Test-Suite fehlschlagen lassen. \newline
+Damit das funktioniert müssen wir SimpleCov einbinden und dann die Dateien, welche wir
+auf ihre Test-Coverage prüfen wollen, laden. \newline
 Die Implementation findet im test\_helper.rb statt und sieht wie folgt aus:
 \begin{codebox}[]
   \begin{minted}{ruby}
@@ -353,6 +361,7 @@ bundle exec rails generate redmine_plugin_controller gnosis webhooks
   \end{minted}
 \end{codebox}
 
+\newpage
 Dies generiert einen Controller mit dem Namen \bgmintinline{ruby}{WebhooksController}. Da die Webhook Listener als
 API Funktionen agieren, müssen wir noch die von Rails eingebaute CSRF Protection deaktivieren. Damit sieht der
 Controller so aus:
@@ -375,6 +384,7 @@ ENV = ActiveSupport::HashWithIndifferentAccess.new(yaml_data)
   \end{minted}
 \end{codebox}
 
+\newpage
 \subsection{Pull Request Objekte}
 Als Erstes wird der Event Listener für die Pull Request Objekte erstellt, welcher auf die Webhook Events
 von GitHub wartet. Wenn ein Event empfangen wird, wird der Handler aufgerufen. Dieser Prozess ist auf dem Deployment
@@ -584,6 +594,8 @@ class Deployment < GnosisApplicationRecord
 end
   \end{minted}
 \end{codebox}
+
+\newpage
 Auch hier schlägt die Implementation klare Brücken zu den Activity-Diagrammen. In folgender Grafik ist das
 Activity-Diagramm aus Kapitel \ref{fig:activity_plan_b} mit Code Zeilen notiert. Die erste Zahl ist der Codeblock und
 die Zweite die Zeile.
@@ -622,7 +634,8 @@ Hierfür begibt man sich auf \url{https://deine_organisation.semaphoreci.com/not
 \enquote{New Notification}. Attribute wie \enquote{Name of the notification}, \enquote{Name of the rule} und so weiter
 sind selbst zu entscheiden. Wichtig ist, dass man die Projekte unter \enquote{In Projects} auflistet, unter 
 \enquote{Pipelines} den Regex String \bgmintinline{bash}{/.*-deploy\.yml/} einträgt und zum Schluss unter Webhook
-seine URL + /semaphore\_webhook, sowie WEBHOOK\_SECRET unter \enquote{Secret Name} einträgt. \newline
+seine URL + /semaphore\_webhook, sowie WEBHOOK\_SECRET unter \enquote{Secret Name} einträgt.
+\newpage
 Danach muss die Signatur aufgesetzt werden. Dafür geht man unter
 \url{https://deine_organisation.semaphoreci.com/secrets} und klickt auf \enquote{New Secret}. Das wird WEBHOOK\_SECRET
 benannt und der Wert ist der Secret Key.
@@ -632,29 +645,6 @@ benannt und der Wert ist der Secret Key.
   \caption[Screenshot des Setups des SemaphoreCI Secret Key]{Setup des SemaphoreCI Secret Key}
   \label{fig:setup_semaphore_webhook}
 \end{figure}
-
-\subsection{Wieso aktiv Gepollt wird}
-\label{sec:why_active_polling}
-Obwohl Software-Design Anforderung 5 besagt, dass aktives Polling der Dienste nicht vorkommen sollte, ist
-es bei guter Begründung erlaubt. In diesem Fall wird aktiv GitHub abgefragt, weil die Informationen von
-den SemaphoreCI Webhooks nicht ausreichen. Diese geben nämlich eine \enquote{Commit-Range} an, anstatt
-eine Liste aller Commits, welche soeben released wurden. \newline
-Falls das Plugin alle GitHub Pull Requests richtig abfangen würde, dürfte das eigentlich kein Problem sein,
-doch das würde zu einem \enquote{Single Point of failure} führen. Falls nur schon eine Pull Request verpasst
-wird, kann es sein, dass diese direkt am Rand der \enquote{Commit-Range} liegt und somit die Range nicht
-eingegrenzt werden kann. Das sieht ungefähr so aus:
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{images/misc/missed_commit_range.png}
-  \caption[UMLet Diagramm eines Beispiels für verpasste Commits]{Beispiel für verpasste Commits}
-  \label{fig:commit_range}
-\end{figure}
-Falls aber der erste Commit in der Range fehlt, ist das eher weniger ein Problem, da man nachschauen
-kann, welcher der erste, noch nicht releaste, Commit ist und dann die Range manuell eingrenzen kann. \newline
-Falls aber der letzte fehlt, kann man das nicht mehr. Und was passiert, falls die History Rebased wird?
-Und in anderen Edge-Cases? Falls diese PA ein Produkt liefern will, welches in der Praxis eingesetzt wird,
-liefert das aktive Polling eine zusätzliche Schicht Sicherheit, dass die kommunizierten Daten wahrheitsgetreu
-sind.
 
 \subsection{GitHub Token}
 Damit das Plugin die GitHub Repositories abfragen kann, muss es sich authentifizieren. Dafür wird ein GitHub
@@ -676,7 +666,8 @@ Mockup (Abbildung \ref{fig:mockup_sublists}).
 \subsection{Aufsetzen der Hook}
 Da die View dieser PA nicht auf einer eigenen Seite, sondern unter Issue Details angezeigt wird, kann man nicht
 einfach einen Controller erstellen, welcher die View zurückschickt. Es wird ein von Redmine eingebautes Feature
-verwendet: Hooks \cite{redmine_hooks}. \newline
+verwendet: Hooks \cite{redmine_hooks}. 
+\newpage
 Dafür geht man als erstes in den \bgmintinline{bash}{/lib/} Ordner und erstellt die Hook Datei. In diesem Fall wurde
 diese \bgmintinline{bash}{issue_details_hook_listener.rb} benannt. In diese wird die (von Redmine gegebene)
 \bgmintinline{ruby}{def view_issues_show_description_bottom} Methode implementiert. Das sieht wie folgt aus:
@@ -816,6 +807,8 @@ require 'redmine'
 require_relative 'lib/issue_details_hook_listener'
   \end{minted}
 \end{codebox}
+
+\newpage
 \subsection{Resultat}
 Diese Komponenten zusammen ergeben dann folgende View:
 \begin{figure}[H]
@@ -824,3 +817,15 @@ Diese Komponenten zusammen ergeben dann folgende View:
   \caption[Screenshot eines Issues mit ausgebauter View]{Issue mit ausgebauter View}
   \label{fig:issue_details}
 \end{figure}
+
+\section{Fertigstellen des README}
+Zum Schluss muss noch das README überarbeitet werden, da jetzt die Implementation fertig ist und genaue Details
+beschrieben werden können. Das \bgmintinline{bash}{README.md} erklärt jetzt folgende Dinge:
+\begin{itemize}
+  \item Was macht das Plugin?
+  \item Wie setzt man die GitHub Webhooks auf?
+  \item Wie setzt man die SemaphoreCI Webhooks auf?
+  \item Wie erstellt man ein GitHub Access Token?
+  \item Welche Konventionen muss man einhalten?
+\end{itemize}
+Das \bgmintinline{bash}{README.rdoc} erklärt weniger, aber referenziert auf das \bgmintinline{bash}{README.md}

@@ -21,15 +21,16 @@ Das Ziel dieser PA ist es, die Pull Requests sowie die Deployment-Status von Iss
 
 \section{Umsetzung}
 
-Die PA wird mit IPERKA geplant und umgesetzt. \newline
-Softwaretechnisch wird die PA mit Ruby on Rails umgesetzt, da Redmine auf dieser Technologie basiert. Es werden auch
+Die PA wurde mit IPERKA geplant und umgesetzt. \newline
+Softwaretechnisch ist die PA mit Ruby on Rails umgesetzt worden, da Redmine auf dieser Technologie basiert. Es wurden auch
 die gleichen Frameworks für: das Testen, die Views und so weiter wie im Standard Redmine verwendet. \newline
-Das Plugin soll auf Webhooks der externen Dienste reagieren und bestimmte Logik als Reaktion darauf ausführen. \newline
-Während der Entwicklung werden für das Plugin auch automatisierte Tests geschrieben, um die Qualität des Codes zu gewährleisten.
-Die Test-Abdeckung soll 100\% betragen.
+Das Plugin reagiert auf Webhooks der externen Dienste und führt bestimmte Logik als Reaktion darauf aus. \newline
+Während der Entwicklung wurden für das Plugin auch automatisierte Tests geschrieben, um die Qualität des Codes zu gewährleisten.
+Die Test-Abdeckung betrug bei jeder Pull Request 100\%.
 
 \section{Ergebnis}
 
-Das Ergebnis dieser PA sollte ein Redmine-Plugin sein, welches die oben genannten Informationen wiedergeben kann. \newline
-Das Plugin soll komplett von Redmine abgekoppelt sein, damit es auch in anderen Redmine-Instanzen verwendet werden kann.
-Das bedeutet, dass der Quellcode von Redmine selbst nicht verändert werden darf. \newline
+Das Ergebnis dieser PA ist ein Deployment-Ready Plugin, welches Pull Requests und dessen Deployments in Unterlisten eines
+Issues auflistet. \newline
+Das Plugin ist vollständig von Redmine abgekoppelt und kann somit in jeder Redmine-Instanz verwendet werden. \newline
+
