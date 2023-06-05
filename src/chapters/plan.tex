@@ -32,8 +32,8 @@ Die erste Option ist, dass für Deployments und Pull-Requests eigene Entitäten 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.8\textwidth]{images/erd/multiple.png}
-  \label{fig:erd_multiple}
   \caption[Ein ERD, welches eine separate Entität für Deployments und Pull-Requests aufzeigt.]{ERD mit separaten Entitäten.}
+  \label{fig:erd_multiple}
 \end{figure}
 
 \subsubsection{Option 2: Inheritance}
@@ -77,7 +77,7 @@ dargestellt wurden:
 \subsubsection{SemaphoreCI Plan B}
 Da SemaphoreCI in den Webhook Daten nicht alle Commit-Hashes, sondern nur eine Range mitliefert, kann es sein, dass die
 Informationen, über welche Commits Deployed wurden, nicht vorhanden sind. Deswegen wird hier ein zweiter Vorschlag für den
-SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen, wie die Commit-Geschichte aussieht. So
+SemaphoreCI Workflow präsentiert. Dieser würde direkt auf GitHub nachfragen, wie die Commit-History aussieht. So
 ungefähr würde das aussehen:
 \begin{figure}[H]
   \centering
@@ -94,6 +94,7 @@ eine neue Brücke vom Plugin zu GitHub existiert. In Rot markiert ist die neue B
   \label{fig:activity_plan_b_deployment}
 \end{figure}
 
+\newpage
 \subsubsection{Abfrage der Issues}
 Falls der Nutzer auf die Details eines Issues klickt, wird eine Abfrage an das Plugin gesendet, welches die Pull Requests sowie
 Deployments abfragt und diese zurückgibt:
@@ -106,12 +107,13 @@ Deployments abfragt und diese zurückgibt:
 
 \subsection{Mockups}
 \label{sec:mockups}
-Damit die UI besser geplant werden kann, wird diese mit Mockups visualisiert. Diese Mockups sollen
-nur ungefähr wiedergeben, wie die UI aussehen soll. Da das Plugin auf einer bereits existierenden 
+Damit das UI besser geplant werden kann, wird dieses mit Mockups visualisiert. Diese Mockups sollen
+nur ungefähr wiedergeben, wie das UI aussehen soll. Da das Plugin auf einer bereits existierenden 
 Ansicht aufbaut, nämlich der Issue-View, wird diese nur sehr abstrahiert dargestellt. \newline
 Die bereits existierende Ansicht ist in der Abbildung mit weniger Opazität dargestellt.
 
-\subsubsection{Zwei Listen}
+\newpage
+\subsubsection{Option 1: Zwei Listen}
 Option eins ist, dass die Pull-Requests und Deployments in zwei Listen dargestellt werden. Das würde ungefähr so
 aussehen:
 \begin{figure}[H]
@@ -121,10 +123,10 @@ aussehen:
   \label{fig:mockup_multi_lists}
 \end{figure}
 
-\subsubsection{Eine Liste mit Unterlisten}
+\subsubsection{Option 2: Eine Liste mit Unterlisten}
 Die zweite Option ist, dass die Pull Requests aufgelistet werden und die Deployments als Unterlisten aufgelistet
 werden. So würde das aussehen:
-\begin{figure}
+\begin{figure}[H]
   \centering 
   \includegraphics[width=0.8\textwidth]{images/mockup/sublists.png}
   \caption[Ein Mockup, bei welchem die Deployments als Unterlisten aufgelistet werden.]{Mockup vom Sublisten-Design.}
@@ -135,6 +137,24 @@ werden. So würde das aussehen:
 \label{sec:testkonzept}
 Das Testkonzept beschreibt, wie und mit welchen Werkzeugen das Resultat auf seine Richtigkeit kontrolliert wird.
 
+\subsection{Testmittel}
+Als Testmittel werden folgende Tools verwendet:
+\begin{itemize}
+  \item \textbf{Redmine} für das Erstellen von Issues
+  \item \textbf{GitHub} für das Erstellen von Repositories und Pull Requests
+  \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
+  \item \textbf{ngrok} für das Erstellen von HTTP-Tunnels
+\end{itemize}
+
+\subsection{Testumgebung}
+Die Testumgebung unterscheidet sich zwischen den automatisierten und manuellen Tests.
+\subsubsection{Automatisierte Tests}
+Die automatisierten Tests werden auf SemaphoreCI ausgeführt. Diese laufen auf einem Ubuntu Server, welcher eine
+\enquote{semaphore.yml} Datei hat. Diese Datei definiert, welche Schritte ausgeführt werden sollen.
+\subsubsection{Manuelle Tests}
+Die manuellen Tests werden auf dem lokalen Gerät des Kandidaten ausgeführt. Dieses Gerät läuft auf MacOS und nutzt
+den Firefox, sowie Chrome Browser um die Kompatibilität zu testen.
+
 \subsection{Automatisierte Tests}
 Es werden automatisierte Tests für das Plugin geschrieben, welche die Funktionalität der Applikation testen.
 Diese werden mit den gleichen Frameworks wie die vom Redmine geschrieben. Das heisst, dass die Tests mit
@@ -143,7 +163,7 @@ folgenden Frameworks geschrieben werden:
   \item \textbf{MiniTest} für die Unit-Tests
   \item \textbf{Capybara} für die System-Tests
 \end{itemize}
-Die coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
+Die Coverage sollte 100\% betragen (bei Klassen über 5 Zeilen). Diese Tests werden dann automatisch auf 
 SemaphoreCI ausgeführt. Von der CI erhalten wir dann einen Coverage-Report, sowie eine Liste der
 fehlgeschlagenen Tests. Nur falls alles in Ordnung ist, kann man die Pull-Request mergen.
 
@@ -160,7 +180,7 @@ Die Coverage, sowie andere wichtige Informationen werden unter \ref{sec:automate
 Während der Entwicklung und für allfällige Demonstrationszwecke werden manuelle Tests durchgeführt. Diese
 werden in diesem Kapitel beschrieben und unter \ref{sec:manual-tests} protokolliert.
 
-\subsubsection{Allgemeiner Vorgang}
+\subsubsection{Allgemeiner Vorgang (Vorraussetzungen)}
 \label{sec:general-testing}
 Um die Funktionalität des Plugins zu testen, muss eine eintreffende Webhook von SemaphoreCI oder GitHub simuliert werden.
 Dabei hat man zwei Optionen:
@@ -232,24 +252,6 @@ alles was in Fällen 1-4 getestet wurde, nochmals getestet. \newline
 Für diesen Testfall werden Tests 3 und 4 auf Chrome und Firefox durchgeführt. Es müssen nur Fälle 3 und 4
 ausgeführt werden, da die anderen nur im Backend etwas machen und dieser Testfall das UI testet. \newline
 \textbf{Das zu erwartende Resultat ist,} dass alles funktioniert wie in den Fällen 3 und 4.
-
-\subsection{Testmittel}
-Als Testmittel werden folgende Tools verwendet:
-\begin{itemize}
-  \item \textbf{Redmine} für das Erstellen von Issues
-  \item \textbf{GitHub} für das Erstellen von Repositories und Pull Requests
-  \item \textbf{SemaphoreCI} für das Erstellen von Pipelines
-  \item \textbf{ngrok} für das Erstellen von HTTP-Tunnels
-\end{itemize}
-
-\subsection{Testumgebung}
-Die Testumgebung unterscheidet sich zwischen den automatisierten und manuellen Tests.
-\subsubsection{Automatisierte Tests}
-Die automatisierten Tests werden auf SemaphoreCI ausgeführt. Diese laufen auf einem Ubuntu Server, welcher eine
-\enquote{semaphore.yml} Datei hat. Diese Datei definiert, welche Schritte ausgeführt werden sollen.
-\subsubsection{Manuelle Tests}
-Die manuellen Tests werden auf dem lokalen Gerät des Kandidaten ausgeführt. Dieses Gerät läuft auf MacOS und nutzt
-den Firefox, sowie Chrome Browser um die Kompatibilität zu testen.
 
 \subsection{Was bewusst nicht getestet wird}
 Da Git ein sehr komplexes System ist, werden bestimmte Edge-Cases nicht getestet. Damit ist hauptsächlich

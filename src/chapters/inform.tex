@@ -52,6 +52,7 @@ Der Auftrag kann in folgende Arbeitspakete aufgeteilt und nach den Phasen der Pr
     \end{description}
 \end{itemize}
 
+\newpage
 \section{Systemaufbau}
 Im Folgenden wird die Einbettung des Systems in das Gesamtsystem gezeigt sowie die vorhandenen Schnittstellen und Akteure beschrieben.
 
@@ -66,19 +67,20 @@ auf das System.
     \label{fig:deployment-diagram}
 \end{figure}
 
+\newpage
 \subsection{Schnittstellen}
 Dieses Kapitel beschreibt die in der Grafik \ref{fig:deployment-diagram} gezeigten Schnittstellen im Detail.
 Unter Schnittstellen gelten Elemente, die ausserhalb des Plugins liegen.
 
 \subsubsection{SemaphoreCI}
 SemaphoreCI ist ein Dienst, welcher die CI/CD Pipeline für Projekte bereitstellt. Dieser hat ein
-\enquote{Notification} System, welches bei bestimmten Events (in diesem Fall Deployments) JSON Daten
-an eine URL sendet. In diesem Fall wird die URL vom Plugin bereitgestellt.
+\enquote{Notification} System, welches bei bestimmten Events (in diesem Fall Deployments) per Webhook Daten
+verschickt.
 
 \subsubsection{GitHub}
 GitHub ist ein Dienst, welcher die Versionsverwaltung für Projekte bereitstellt. Dieser hat, gleich wie
 SemaphoreCI, ein System, welches JSON Daten bei bestimmten Events verschickt. Der Unterschied hier ist, dass
-diese Daten das Plugin bei einer Pull Request erreichen, anstatt bei einem Deployment.
+die Webhooks bei Pull Requests anstatt bei Deployments ausgelöst werden.
 
 \subsubsection{Database}
 Die Database repräsentiert die Datenbank, welche von der Redmine-Instanz verwendet wird. Diese kann dank
@@ -90,8 +92,8 @@ Datenbank und dem Rails Programm dar. Es wird verwendet, um die Datenbank zu abs
 in Objekte zu konvertieren.
 
 \subsubsection{Issues Controller}
-Der Issues Controller ist der von Redmine bereits vorhandene Controller, welcher für die Issues zuständig ist.
-Er kümmert sich um die Auflistung sowie detailierte Ansicht für Issues. Dieser Controller steht im System
+Der Issues Controller ist der von Redmine bereits vorhandene Controller.
+Er kümmert sich um die Auflistung sowie detaillierte Ansicht für Issues. Dieser Controller steht im System
 verbunden mit einem \enquote{Check for Hook} mit dem Plugin in Verbindung. Das bedeutet, dass das Plugin die
 Funktionalität des Controllers erweitert.
 
@@ -101,6 +103,7 @@ Die View ist das zurückgeschickte HTML vom Controller.
 \subsection{Akteure}
 \begin{tabularx}{\textwidth}[H]{|c|X|}
   \hline
+  \textbf{Akteur} & \textbf{Beschreibung} \\ \hline
   User & Der \enquote{User} ist der Redmine-Nutzer. Dieser kann eine beliebige Rolle haben, solange er die 
   Issues lesen darf. \\ \hline
   GitHub \& SemaphoreCI & Diese beiden Akteure sind die Dienste, welche auf die Schnittstellen zugreifen.

@@ -14,7 +14,7 @@ Die erste Option, wie auf Grafik \ref{fig:erd_multiple} zu sehen, ist, dass für
 eigene Entitäten erstellt werden, welche beide direkt mit den Issues verbunden sind. \newline
 Die Vorteile dieser Option sind beispielsweise, dass die Komplexität der Datenstruktur gering ist. Es ist einfach zu
 implementieren und eventuellen späteren Entwicklern zu erklären. \newline
-Ein grosser Nachteil dieser Datenstruktur ist, dass wahrscheinlich zwei separate Kontroller erstellt werden müssen, was
+Ein grosser Nachteil dieser Datenstruktur ist, dass wahrscheinlich zwei separate Controller erstellt werden müssen, was
 die Codebase unnötig vergrössert (aber nicht unbedingt Komplexität hinzufügt).
 
 \subsubsection{Option 2: Inheritance}
@@ -38,7 +38,7 @@ Ein grosses Problem an diesem Ansatz ist, dass diese Option sehr viel von der Da
 kann das eventuell zu Performance-Problemen führen.
 
 \subsection{Activity-Diagram}
-Die Acticity-Diagramme unter Kapitel \ref{sec:activity_diagram} zeigen mehr oder weniger die einzige Möglichkeit auf den
+Die Acticity-Diagramme unter Kapitel \ref{sec:activity_diagram} zeigen mehr oder weniger die einzige Möglichkeit auf, den
 Prozess zu gestalten. Im Design dieses Projektes muss man sich viel externen Prozessen anpassen; Redmine gibt den
 Issue-Prozess vor und GitHub sowie SemaphoreCI die Webhook Prozesse.
 
@@ -51,20 +51,21 @@ Die einzige Freiheit, welche geboten wird, ist die Wahl der Datenbank.
 Obwohl der Grossteil der UI bereits von Redmine vorgegeben wird, wird ein Teil selbst gestaltet. Die Mockups unter Kapitel
 \ref{sec:mockups} zeigen zwei Möglichkeiten bezüglich der UI auf. \newline
 Es gibt hier nicht viel zu entscheiden, da es eine Sache von persönlicher Präferenz ist. Dennoch haben beide Optionen
-Vor- und Nachteile. \newline
+Vor- und Nachteile.
 
 \subsubsection{Option 1: Zwei Listen}
 Die erste Option, illustriert auf Grafik \ref{fig:mockup_multi_lists}, zeigt zwei Listen. Eine für die Pull Requests und
 die Zweite darunter für Deployments. \newline
 Während es besser voneinander getrennt ist, wird es schwierig zu wissen, zu welcher Pull Request welcher Deployment
-gehört. \newline
+gehört.
 
-\subsubsection{Eine Liste mit Unterlisten}
+\subsubsection{Option 2: Eine Liste mit Unterlisten}
 Die Zweite Option wird auf Grafik \ref{fig:mockup_sublists} dargestellt. Bei dieser gibt es nur eine Liste, welche
 die Pull Requests auflistet. Jede Pull Request hat eine Liste von vergangenen Deployments und dessen Status. \newline
 Obwohl diese Option schnell sehr unübersichtlich aussehen kann, hat man den Vorteil das die Deployments jeder
-Pull Request einfacher zuzuordnen sind. \newline
+Pull Request einfacher zuzuordnen sind.
 
+\newpage
 \section{Entscheidungen}
 \subsection{Entity-Relationship-Diagram}
 \label{sec:decide_erd}
@@ -85,19 +86,39 @@ Pull Request einfacher zuzuordnen sind. \newline
 Die Entscheidung fiel auf die dritte Option (Kapitel \ref{sec:decide_has_many_through}), da diese die Realität am besten
 abbildet, es einfacher zu erweitern ist und die Implementation ausserdem nicht sehr komplex ist. \newline
 Langfristig wird die Codebase dadurch profitieren, da die Datenstruktur einfacher zu verstehen ist und die Komplexität
-tiefer ist. \newline
+tiefer ist.
 
 \subsection{Activity Diagramme}
-Zu den Activity Diagrammen gibt es nichts zu entscheiden, ausser wie SemaphoreCI implementiert wird,
-da wahrscheinlich ein Backup-Plan nötig ist. \newline
-Momentan fehlen Informationen darüber, ob die Implementation möglich ist, weshalb die GitHub Implementation als erstes
-stattfinden wird. Danach wird während der Implementation von SemaphoreCI entschieden, ob es möglich ist oder nicht. Falls
-nicht, wird der Backup-Plan implementiert. \newline
+Bei den Activity-Diagrammen muss nur entschieden werden, ob der Backup-Plan für SemaphoreCI implementiert wird oder nicht.
+Nach kurzem Überlegen wurde aber schnell klar, dass der Backup-Plan implementiert werden muss. Eine tiefere Erklärung
+dazu folgt.
+
+\subsubsection{Wieso aktiv Gepollt wird (Backup-Plan)}
+\label{sec:why_active_polling}
+Obwohl Software-Design Anforderung 5 besagt, dass aktives Polling der Dienste nicht vorkommen sollte, ist
+es bei guter Begründung erlaubt. In diesem Fall wird aktiv GitHub abgefragt, weil die Informationen von
+den SemaphoreCI Webhooks nicht ausreichen. Diese geben nämlich eine \enquote{Commit-Range} an, anstatt
+eine Liste aller Commits, welche soeben released wurden. \newline
+Falls das Plugin alle GitHub Pull Requests richtig abfangen würde, dürfte das eigentlich kein Problem sein,
+doch das würde zu einem \enquote{Single Point of failure} führen. Falls nur schon eine Pull Request verpasst
+wird, kann es sein, dass diese direkt am Rand der \enquote{Commit-Range} liegt und somit die Range nicht
+eingegrenzt werden kann. Das sieht ungefähr so aus:
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.8\textwidth]{images/misc/missed_commit_range.png}
+  \caption[UMLet Diagramm eines Beispiels für verpasste Commits]{Beispiel für verpasste Commits}
+  \label{fig:commit_range}
+\end{figure}
+Falls aber der erste Commit in der Range fehlt, ist das eher weniger ein Problem, da man nachschauen
+kann, welcher der erste, noch nicht releaste, Commit ist und dann die Range manuell eingrenzen kann. \newline
+Falls aber der letzte fehlt, kann man das nicht mehr. Und was passiert, falls die History Rebased wird?
+Und in anderen Edge-Cases? Falls diese PA ein Produkt liefern will, welches in der Praxis eingesetzt wird,
+liefert das aktive Polling eine zusätzliche Schicht Sicherheit, dass die kommunizierten Daten wahrheitsgetreu
+sind.
 
 \subsection{Tech-Stack}
 Die Entscheidung für den Tech-Stack ist bereits gefallen, da Redmine diesen vorgibt. \newline
 Die Datenbank für die CI, sowie das lokale testen wird PostgreSQL sein, da dass der Standard bei der Renuo AG ist.
-\newline
 
 \subsection{Mockups}
 \subsubsection{Bewertungsmatrix}
